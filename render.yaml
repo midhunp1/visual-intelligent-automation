@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: via-platform
+    runtime: node
+    repo: https://github.com/midhunp1/visual-intelligent-automation
+    buildCommand: npm install && npx playwright install-deps && npx playwright install chromium
+    startCommand: node server-working.js
+    envVars:
+      - key: PORT
+        value: 8288
+      - key: NODE_ENV
+        value: production
+      - key: PLAYWRIGHT_BROWSERS_PATH
+        value: /opt/render/project/.cache/ms-playwright
+    autoDeploy: true
