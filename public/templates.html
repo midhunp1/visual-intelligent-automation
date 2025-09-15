@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Templates - Visual Test Automation Platform</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .templates-page {
+            padding: 24px 24px 24px 48px;
+            max-width: 100%;
+            margin: 0;
+        }
+        
+        .templates-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--gray-200);
+            max-width: 1400px;
+        }
+        
+        .templates-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+        
+        .templates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 24px;
+            max-width: 1400px;
+        }
+        
+        .template-card {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s;
+        }
+        
+        .template-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+            border-color: var(--primary);
+        }
+        
+        .template-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+        
+        .template-card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 4px;
+            word-break: break-word;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        
+        .template-card-title:hover {
+            background: var(--gray-50);
+        }
+        
+        .template-card-title.editing {
+            background: var(--white);
+            border: 2px solid var(--primary);
+            outline: none;
+        }
+        
+        .template-card-url {
+            font-size: 13px;
+            color: var(--gray-500);
+            margin-bottom: 12px;
+        }
+        
+        .template-card-meta {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: var(--gray-600);
+        }
+        
+        .template-card-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .btn-template {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            white-space: nowrap;
+            min-width: fit-content;
+        }
+        
+        .btn-template svg {
+            flex-shrink: 0;
+            width: 14px;
+            height: 14px;
+        }
+        
+        .btn-template.run {
+            background: var(--primary);
+            color: var(--white);
+        }
+        
+        .btn-template.run:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+        
+        .btn-template.delete {
+            background: var(--white);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+        
+        .btn-template.delete:hover {
+            background: var(--danger);
+            color: var(--white);
+        }
+        
+        .empty-templates {
+            text-align: center;
+            padding: 80px 20px;
+            color: var(--gray-500);
+        }
+        
+        .empty-templates-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            color: var(--gray-300);
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--gray-300);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Top Navigation Bar -->
+        <nav class="navbar">
+            <div class="nav-left">
+                <div class="logo">
+                    <svg width="42" height="42" viewBox="0 0 42 42" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Infinity symbol with modern twist -->
+                        <path d="M11 21C11 17 7 13 7 21C7 29 11 25 15 21L27 21C31 17 35 13 35 21C35 29 31 25 27 21" fill="none" stroke="url(#viaGradient)" stroke-width="2.5" stroke-linecap="round"/>
+                        <!-- Center connection point -->
+                        <circle cx="21" cy="21" r="3" fill="url(#viaGradient)"/>
+                        <!-- Interactive nodes -->
+                        <circle cx="11" cy="21" r="2" fill="#3B82F6" opacity="0.8"/>
+                        <circle cx="31" cy="21" r="2" fill="#8B5CF6" opacity="0.8"/>
+                        <defs>
+                            <linearGradient id="viaGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#3B82F6;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#60A5FA;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#8B5CF6;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                    </svg>                    <span class="logo-text">VIA</span>
+                </div>
+                <div class="nav-tabs">
+                    <button class="nav-tab" onclick="window.location.href='home.html'">Home</button>
+                    <button class="nav-tab" onclick="window.location.href='index.html'">Visual Editor</button>
+                    <button class="nav-tab" onclick="window.location.href='test-runs.html'">Test Runs</button>
+                    <button class="nav-tab active">Templates</button>
+                    <button class="nav-tab" onclick="window.location.href='scheduling.html'">Scheduling</button>
+                    <button class="nav-tab" onclick="window.location.href='scheduled-history.html'">Scheduled History</button>
+                    <button class="nav-tab" onclick="window.location.href='history.html'">History</button>
+                    <button class="nav-tab" onclick="window.location.href='analytics.html'">Analytics</button>
+                </div>
+            </div>
+            <div class="nav-right">
+                <button class="btn-icon">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="10" cy="10" r="8"/>
+                        <path d="M10 6v4l3 3"/>
+                    </svg>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Templates Page Content -->
+        <div class="templates-page">
+            <div class="templates-header">
+                <h1 class="templates-title">Test Templates</h1>
+                <div class="templates-controls">
+                    <button id="refresh-templates" class="btn-primary">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 12a9 9 0 0 1 9-9 9 9 0 0 1-9 9zm9-9a9 9 0 0 1-9 9"/>
+                        </svg>
+                        Refresh Templates
+                    </button>
+                </div>
+            </div>
+            
+            <div id="templates-grid" class="templates-grid">
+                <div class="empty-templates">
+                    <div class="loading-spinner"></div>
+                    <p style="margin-top: 16px;">Loading templates...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="templates.js"></script>
+</html>

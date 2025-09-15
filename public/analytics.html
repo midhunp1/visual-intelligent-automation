@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - Visual Test Automation Platform</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .app-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .navbar {
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: white;
+        }
+        
+        .analytics-page {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px 24px 100px 48px;
+            max-width: 100%;
+            margin: 0;
+        }
+
+        .analytics-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #E5E7EB;
+            max-width: 1400px;
+        }
+
+        .analytics-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+            max-width: 1400px;
+        }
+
+        .metric-card {
+            background: white;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.2s;
+        }
+
+        .metric-card:hover {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .metric-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #6B7280;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .metric-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 4px;
+        }
+
+        .metric-change {
+            font-size: 14px;
+            color: #6B7280;
+        }
+
+        .metric-change.positive {
+            color: #10B981;
+        }
+
+        .metric-change.negative {
+            color: #EF4444;
+        }
+
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 24px;
+            max-width: 1400px;
+        }
+
+        .chart-card {
+            background: white;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            padding: 24px;
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 20px;
+        }
+
+        .chart-canvas {
+            max-height: 300px;
+        }
+
+        .time-filter {
+            display: flex;
+            gap: 8px;
+        }
+
+        .time-btn {
+            padding: 6px 12px;
+            background: white;
+            border: 1px solid #D1D5DB;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .time-btn.active {
+            background: #3B82F6;
+            color: white;
+            border-color: #3B82F6;
+        }
+
+        .time-btn:hover:not(.active) {
+            background: #F9FAFB;
+            border-color: #9CA3AF;
+        }
+
+        .success-rate-ring {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+        }
+
+        .performance-table {
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .performance-table th {
+            text-align: left;
+            padding: 12px;
+            background: #F9FAFB;
+            border-bottom: 1px solid #E5E7EB;
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #6B7280;
+        }
+
+        .performance-table td {
+            padding: 12px;
+            border-bottom: 1px solid #F3F4F6;
+            font-size: 14px;
+        }
+
+        .empty-analytics {
+            text-align: center;
+            padding: 60px 20px;
+            color: #9CA3AF;
+        }
+
+        .empty-analytics svg {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Top Navigation Bar -->
+        <nav class="navbar">
+            <div class="nav-left">
+                <div class="logo">
+                    <svg width="42" height="42" viewBox="0 0 42 42" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Infinity symbol with modern twist -->
+                        <path d="M11 21C11 17 7 13 7 21C7 29 11 25 15 21L27 21C31 17 35 13 35 21C35 29 31 25 27 21" fill="none" stroke="url(#viaGradient)" stroke-width="2.5" stroke-linecap="round"/>
+                        <!-- Center connection point -->
+                        <circle cx="21" cy="21" r="3" fill="url(#viaGradient)"/>
+                        <!-- Interactive nodes -->
+                        <circle cx="11" cy="21" r="2" fill="#3B82F6" opacity="0.8"/>
+                        <circle cx="31" cy="21" r="2" fill="#8B5CF6" opacity="0.8"/>
+                        <defs>
+                            <linearGradient id="viaGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#3B82F6;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#60A5FA;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#8B5CF6;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                    </svg>                    <span class="logo-text">VIA</span>
+                </div>
+                <div class="nav-tabs">
+                    <button class="nav-tab" onclick="window.location.href='home.html'">Home</button>
+                    <button class="nav-tab" onclick="window.location.href='index.html'">Visual Editor</button>
+                    <button class="nav-tab" onclick="window.location.href='test-runs.html'">Test Runs</button>
+                    <button class="nav-tab" onclick="window.location.href='templates.html'">Templates</button>
+                    <button class="nav-tab" onclick="window.location.href='scheduling.html'">Scheduling</button>
+                    <button class="nav-tab" onclick="window.location.href='scheduled-history.html'">Scheduled History</button>
+                    <button class="nav-tab" onclick="window.location.href='history.html'">History</button>
+                    <button class="nav-tab active">Analytics</button>
+                </div>
+            </div>
+            <div class="nav-right">
+                <div class="time-filter">
+                    <button class="time-btn active" onclick="analyticsManager.setTimeRange('24h')">24h</button>
+                    <button class="time-btn" onclick="analyticsManager.setTimeRange('7d')">7d</button>
+                    <button class="time-btn" onclick="analyticsManager.setTimeRange('30d')">30d</button>
+                    <button class="time-btn" onclick="analyticsManager.setTimeRange('all')">All</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Analytics Page Content -->
+        <div class="analytics-page">
+            <div class="analytics-header">
+                <h1 class="analytics-title">Test Analytics Dashboard</h1>
+            </div>
+
+            <!-- Key Metrics Cards -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Total Executions</div>
+                    <div class="metric-value" id="total-executions">0</div>
+                    <div class="metric-change" id="executions-change">--</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">Success Rate</div>
+                    <div class="metric-value" id="success-rate">0%</div>
+                    <div class="metric-change" id="success-change">--</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">Average Duration</div>
+                    <div class="metric-value" id="avg-duration">0s</div>
+                    <div class="metric-change" id="duration-change">--</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">Failed Tests</div>
+                    <div class="metric-value" id="failed-tests">0</div>
+                    <div class="metric-change" id="failed-change">--</div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="charts-container">
+                <!-- Execution Trend Chart -->
+                <div class="chart-card">
+                    <h3 class="chart-title">Execution Trend</h3>
+                    <canvas id="executionTrendChart" class="chart-canvas"></canvas>
+                </div>
+
+                <!-- Success/Failure Distribution -->
+                <div class="chart-card">
+                    <h3 class="chart-title">Success/Failure Distribution</h3>
+                    <canvas id="successFailureChart" class="chart-canvas"></canvas>
+                </div>
+
+                <!-- Duration Distribution -->
+                <div class="chart-card">
+                    <h3 class="chart-title">Execution Duration Distribution</h3>
+                    <canvas id="durationChart" class="chart-canvas"></canvas>
+                </div>
+
+                <!-- Test Type Distribution -->
+                <div class="chart-card">
+                    <h3 class="chart-title">Test Type Distribution</h3>
+                    <canvas id="typeChart" class="chart-canvas"></canvas>
+                </div>
+            </div>
+
+            <!-- Top Performers/Failures Table -->
+            <div class="chart-card" style="margin-top: 24px; max-width: 1400px;">
+                <h3 class="chart-title">Performance Summary</h3>
+                <table class="performance-table">
+                    <thead>
+                        <tr>
+                            <th>Test Name</th>
+                            <th>Type</th>
+                            <th>Runs</th>
+                            <th>Success Rate</th>
+                            <th>Avg Duration</th>
+                        </tr>
+                    </thead>
+                    <tbody id="performance-tbody">
+                        <!-- Performance data will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Empty State -->
+            <div id="empty-analytics" class="empty-analytics" style="display: none;">
+                <svg fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M3 13h2v8H3v-8zm4-8h2v16H7V5zm4 4h2v12h-2V9zm4-2h2v14h-2V7zm4-4h2v18h-2V3z"/>
+                </svg>
+                <h3>No Analytics Data Available</h3>
+                <p>Run some tests to start seeing analytics</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="analytics.js"></script>
+</html>

@@ -1,0 +1,34 @@
+{
+  "success": true,
+  "data": {
+    "scripts": [
+      {
+        "id": "script-1757689580713",
+        "name": "Working login",
+        "templateName": "myt_sit_fhcdn_dev_2025-09-10T09-56-11.js",
+        "addedAt": "2025-09-12T15:06:20.713Z"
+      },
+      {
+        "id": "script-1757689581709",
+        "name": "Order complete",
+        "templateName": "myt_sit_fhcdn_dev_2025-09-12T15-05-47.js",
+        "addedAt": "2025-09-12T15:06:21.709Z"
+      }
+    ],
+    "suites": [
+      {
+        "id": "suite-1757689588790",
+        "name": "ordering flow",
+        "scripts": [
+          "script-1757689580713",
+          "script-1757689581709"
+        ],
+        "createdAt": "2025-09-12T15:06:28.790Z"
+      },
+      {
+        "name": "Video Test Suite",
+        "scripts": []
+      }
+    ]
+  }
+}

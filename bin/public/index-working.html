@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visual Test Automation - Working Solution</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 800px;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .url-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        input[type="url"] {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="url"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .btn-record {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-record:hover {
+            background: #059669;
+        }
+
+        .btn-stop {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-stop:hover {
+            background: #dc2626;
+        }
+
+        .btn-play {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-play:hover {
+            background: #2563eb;
+        }
+
+        .btn-export {
+            background: #8b5cf6;
+            color: white;
+        }
+
+        .btn-export:hover {
+            background: #7c3aed;
+        }
+
+        .status-box {
+            background: #f3f4f6;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .status-title {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-message {
+            font-size: 18px;
+            color: #111827;
+            font-weight: 500;
+        }
+
+        .status-message.recording {
+            color: #10b981;
+        }
+
+        .status-message.error {
+            color: #ef4444;
+        }
+
+        .steps-container {
+            background: #f9fafb;
+            border-radius: 10px;
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .steps-title {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .step-count {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .step-item {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s;
+        }
+
+        .step-item:hover {
+            border-color: #667eea;
+            transform: translateX(5px);
+        }
+
+        .step-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .step-details {
+            flex: 1;
+        }
+
+        .step-type {
+            font-size: 12px;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .step-content {
+            font-size: 14px;
+            color: #111827;
+            margin-top: 2px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #9ca3af;
+            padding: 40px;
+        }
+
+        .info-box {
+            background: #fef3c7;
+            border: 2px solid #fbbf24;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-box h3 {
+            color: #92400e;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .info-box p {
+            color: #92400e;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .recording-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: #ef4444;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 Visual Test Automation</h1>
+        <p class="subtitle">Working Solution with Playwright Codegen</p>
+
+        <div class="info-box">
+            <h3>ℹ️ How It Works</h3>
+            <p>This solution uses Playwright's official Codegen recorder which captures ALL browser interactions including VNC clicks. When you start recording, a new browser window opens - interact with it and all actions are recorded!</p>
+        </div>
+
+        <div class="url-input-group">
+            <input type="url" id="target-url" placeholder="https://example.com" value="https://example.com">
+            <button class="btn btn-primary" id="load-website">
+                Load Website
+            </button>
+        </div>
+
+        <div class="status-box">
+            <div class="status-title">Status</div>
+            <div class="status-message" id="status-message">
+                Ready to start
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-record" id="start-recording" disabled>
+                ⏺️ Start Recording
+            </button>
+            <button class="btn btn-stop" id="stop-recording" disabled>
+                ⏹️ Stop Recording
+            </button>
+            <button class="btn btn-play" id="play-test" disabled>
+                ▶️ Play Test
+            </button>
+            <button class="btn btn-export" id="export-script" disabled>
+                💾 Export Script
+            </button>
+        </div>
+
+        <div class="steps-container">
+            <div class="steps-title">
+                <span>Recorded Steps</span>
+                <span class="step-count" id="step-count">0 steps</span>
+            </div>
+            <div id="steps-list">
+                <div class="empty-state">
+                    No steps recorded yet. Start recording to capture browser interactions.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Socket.IO for real-time communication -->
+    <script src="/socket.io/socket.io.js"></script>
+    
+    <script>
+        const socket = io();
+        let sessionId = null;
+        let isRecording = false;
+        let recordedSteps = [];
+
+        // Elements
+        const loadBtn = document.getElementById('load-website');
+        const startBtn = document.getElementById('start-recording');
+        const stopBtn = document.getElementById('stop-recording');
+        const playBtn = document.getElementById('play-test');
+        const exportBtn = document.getElementById('export-script');
+        const statusEl = document.getElementById('status-message');
+        const stepsList = document.getElementById('steps-list');
+        const stepCount = document.getElementById('step-count');
+
+        // Load website - Initialize session
+        loadBtn.addEventListener('click', async () => {
+            const url = document.getElementById('target-url').value;
+            if (!url) {
+                alert('Please enter a URL');
+                return;
+            }
+
+            sessionId = 'session-' + Date.now();
+            updateStatus('Initializing session...', 'normal');
+
+            try {
+                const response = await fetch('/api/start-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url, sessionId })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    updateStatus('Session ready. Click "Start Recording" to begin.', 'normal');
+                    startBtn.disabled = false;
+                } else {
+                    updateStatus('Error: ' + data.error, 'error');
+                }
+            } catch (error) {
+                updateStatus('Error loading website', 'error');
+                console.error(error);
+            }
+        });
+
+        // Start recording
+        startBtn.addEventListener('click', async () => {
+            if (!sessionId) return;
+
+            try {
+                const response = await fetch('/api/start-recording', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sessionId })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    isRecording = true;
+                    recordedSteps = [];
+                    clearStepsList();
+                    
+                    updateStatus('🔴 Recording... A new browser window will open. Interact with it to record actions.', 'recording');
+                    startBtn.disabled = true;
+                    stopBtn.disabled = false;
+                    
+                    // Show recording indicator
+                    statusEl.innerHTML = '<span class="recording-indicator"></span>' + statusEl.textContent;
+                    
+                    // Start polling for steps
+                    startPollingSteps();
+                } else {
+                    updateStatus('Error: ' + data.error, 'error');
+                }
+            } catch (error) {
+                updateStatus('Error starting recording', 'error');
+                console.error(error);
+            }
+        });
+
+        // Stop recording
+        stopBtn.addEventListener('click', async () => {
+            if (!sessionId) return;
+
+            try {
+                const response = await fetch('/api/stop-recording', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sessionId })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    isRecording = false;
+                    recordedSteps = data.steps || [];
+                    
+                    updateStatus(`Recording stopped. ${recordedSteps.length} steps captured.`, 'normal');
+                    stopBtn.disabled = true;
+                    playBtn.disabled = recordedSteps.length === 0;
+                    exportBtn.disabled = recordedSteps.length === 0;
+                    
+                    // Display all steps
+                    displaySteps(recordedSteps);
+                    
+                    // Stop polling
+                    stopPollingSteps();
+                    
+                    // Display the generated script
+                    if (data.script) {
+                        console.log('Generated Playwright Script:', data.script);
+                    }
+                } else {
+                    updateStatus('Error: ' + data.error, 'error');
+                }
+            } catch (error) {
+                updateStatus('Error stopping recording', 'error');
+                console.error(error);
+            }
+        });
+
+        // Play test
+        playBtn.addEventListener('click', async () => {
+            if (!sessionId) return;
+
+            try {
+                updateStatus('Playing test...', 'normal');
+                playBtn.disabled = true;
+
+                const response = await fetch('/api/play-recording', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sessionId })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    updateStatus('Test playback started in new browser window', 'normal');
+                    setTimeout(() => {
+                        playBtn.disabled = false;
+                    }, 3000);
+                } else {
+                    updateStatus('Error: ' + data.error, 'error');
+                    playBtn.disabled = false;
+                }
+            } catch (error) {
+                updateStatus('Error playing test', 'error');
+                playBtn.disabled = false;
+                console.error(error);
+            }
+        });
+
+        // Polling for steps
+        let pollInterval = null;
+
+        function startPollingSteps() {
+            pollInterval = setInterval(async () => {
+                if (!isRecording || !sessionId) return;
+
+                try {
+                    const response = await fetch(`/api/recording-status/${sessionId}`);
+                    const data = await response.json();
+                    
+                    if (data.success && data.steps && data.steps.length > recordedSteps.length) {
+                        recordedSteps = data.steps;
+                        displaySteps(recordedSteps);
+                    }
+                } catch (error) {
+                    console.error('Error polling steps:', error);
+                }
+            }, 1000);
+        }
+
+        function stopPollingSteps() {
+            if (pollInterval) {
+                clearInterval(pollInterval);
+                pollInterval = null;
+            }
+        }
+
+        // Socket.IO event handlers
+        socket.on('step-recorded', (data) => {
+            if (data.sessionId !== sessionId) return;
+
+            recordedSteps.push(data.step);
+            displaySteps(recordedSteps);
+        });
+
+        socket.on('recording-complete', (data) => {
+            if (data.sessionId !== sessionId) return;
+
+            isRecording = false;
+            recordedSteps = data.steps || [];
+            displaySteps(recordedSteps);
+            
+            updateStatus(`Recording complete. ${recordedSteps.length} steps captured.`, 'normal');
+            stopBtn.disabled = true;
+            playBtn.disabled = recordedSteps.length === 0;
+            exportBtn.disabled = recordedSteps.length === 0;
+            
+            if (data.script) {
+                console.log('Generated Script:', data.script);
+            }
+        });
+
+        // Helper functions
+        function updateStatus(message, type = 'normal') {
+            statusEl.textContent = message;
+            statusEl.className = 'status-message';
+            if (type === 'recording') {
+                statusEl.classList.add('recording');
+            } else if (type === 'error') {
+                statusEl.classList.add('error');
+            }
+        }
+
+        function clearStepsList() {
+            stepsList.innerHTML = '<div class="empty-state">Recording in progress...</div>';
+            stepCount.textContent = '0 steps';
+        }
+
+        function displaySteps(steps) {
+            if (!steps || steps.length === 0) {
+                clearStepsList();
+                return;
+            }
+
+            stepCount.textContent = `${steps.length} steps`;
+            
+            stepsList.innerHTML = steps.map((step, index) => {
+                const details = getStepDetails(step);
+                return `
+                    <div class="step-item">
+                        <div class="step-number">${index + 1}</div>
+                        <div class="step-details">
+                            <div class="step-type">${step.type || 'action'}</div>
+                            <div class="step-content">${details}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getStepDetails(step) {
+            if (step.code) {
+                return step.code;
+            }
+            
+            switch (step.type) {
+                case 'navigate':
+                    return `Navigate to: ${step.url}`;
+                case 'click':
+                    return `Click: ${step.selector}`;
+                case 'fill':
+                    return `Fill: ${step.selector} with "${step.value}"`;
+                case 'type':
+                    return `Type: "${step.text}" in ${step.selector}`;
+                default:
+                    return JSON.stringify(step);
+            }
+        }
+    </script>
+</body>
+</html>

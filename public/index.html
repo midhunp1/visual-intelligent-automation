@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visual Test Automation Platform</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Top Navigation Bar -->
+        <nav class="navbar">
+            <div class="nav-left">
+                <div class="logo">
+                    <svg width="42" height="42" viewBox="0 0 42 42" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Infinity symbol with modern twist -->
+                        <path d="M11 21C11 17 7 13 7 21C7 29 11 25 15 21L27 21C31 17 35 13 35 21C35 29 31 25 27 21" fill="none" stroke="url(#viaGradient)" stroke-width="2.5" stroke-linecap="round"/>
+                        <!-- Center connection point -->
+                        <circle cx="21" cy="21" r="3" fill="url(#viaGradient)"/>
+                        <!-- Interactive nodes -->
+                        <circle cx="11" cy="21" r="2" fill="#3B82F6" opacity="0.8"/>
+                        <circle cx="31" cy="21" r="2" fill="#8B5CF6" opacity="0.8"/>
+                        <defs>
+                            <linearGradient id="viaGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#3B82F6;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#60A5FA;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#8B5CF6;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                    </svg>                    <span class="logo-text">VIA</span>
+                </div>
+                <div class="nav-tabs">
+                    <button class="nav-tab" onclick="window.location.href='home.html'">Home</button>
+                    <button class="nav-tab active">Visual Editor</button>
+                    <button class="nav-tab" onclick="window.location.href='test-runs.html'">Test Runs</button>
+                    <button class="nav-tab" onclick="window.location.href='templates.html'">Templates</button>
+                    <button class="nav-tab" onclick="window.location.href='scheduling.html'">Scheduling</button>
+                    <button class="nav-tab" onclick="window.location.href='scheduled-history.html'">Scheduled History</button>
+                    <button class="nav-tab" onclick="window.location.href='history.html'">History</button>
+                    <button class="nav-tab" onclick="window.location.href='analytics.html'">Analytics</button>
+                </div>
+            </div>
+            <div class="nav-right">
+                <button class="btn-icon">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="10" cy="10" r="8"/>
+                        <path d="M10 6v4l3 3"/>
+                    </svg>
+                </button>
+                <input type="url" id="target-url" placeholder="https://example.com" style="
+                    padding: 8px 12px;
+                    border: 1px solid var(--gray-300);
+                    border-radius: 6px 0 0 6px;
+                    width: 200px;
+                    font-size: 14px;
+                ">
+                <button class="btn-primary" id="load-website" style="
+                    border-radius: 0 6px 6px 0;
+                    border-left: none;
+                ">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2L2 8l6 2 2 6z"/>
+                    </svg>
+                    Load Website
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">Recording Controls</h3>
+                    <div class="recording-controls">
+                        <button id="start-recording" class="record-btn record-start" disabled>
+                            <svg width="16" height="16" fill="currentColor">
+                                <circle cx="8" cy="8" r="6"/>
+                            </svg>
+                            Start Recording
+                        </button>
+                        <button id="stop-recording" class="record-btn record-stop" disabled>
+                            <svg width="16" height="16" fill="currentColor">
+                                <rect x="3" y="3" width="10" height="10"/>
+                            </svg>
+                            Stop Recording  
+                        </button>
+                        <button id="play-test" class="record-btn record-play" disabled>
+                            <svg width="16" height="16" fill="currentColor">
+                                <path d="M5 3l8 5-8 5V3z"/>
+                            </svg>
+                            Play Test
+                        </button>
+                        <button id="stop-playback" class="record-btn record-stop" disabled style="display: none;">
+                            <svg width="16" height="16" fill="currentColor">
+                                <rect x="3" y="3" width="10" height="10"/>
+                            </svg>
+                            Stop Playback
+                        </button>
+                        <div class="recording-status">
+                            <span id="recording-status">Load a website to start</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">Test Steps</h3>
+                    <div class="step-library">
+                        <div class="step-item" draggable="true" data-type="navigate">
+                            <svg width="20" height="20" fill="currentColor">
+                                <path d="M10 2L3 9h4v9h6V9h4z"/>
+                            </svg>
+                            <span>Navigate</span>
+                        </div>
+                        <div class="step-item" draggable="true" data-type="click">
+                            <svg width="20" height="20" fill="currentColor">
+                                <circle cx="10" cy="10" r="3"/>
+                                <path d="M10 5V2m0 18v-3m5 3l-3-3m-4 0l-3 3"/>
+                            </svg>
+                            <span>Click</span>
+                        </div>
+                        <div class="step-item" draggable="true" data-type="input">
+                            <svg width="20" height="20" fill="currentColor">
+                                <rect x="2" y="6" width="16" height="8" rx="1"/>
+                                <path d="M5 10h10" stroke="white"/>
+                            </svg>
+                            <span>Input Text</span>
+                        </div>
+                        <div class="step-item" draggable="true" data-type="validate">
+                            <svg width="20" height="20" fill="currentColor">
+                                <path d="M5 10l3 3 7-7"/>
+                            </svg>
+                            <span>Validate</span>
+                        </div>
+                        <div class="step-item" draggable="true" data-type="wait">
+                            <svg width="20" height="20" fill="currentColor">
+                                <circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" stroke-width="2"/>
+                                <path d="M10 6v4l3 3"/>
+                            </svg>
+                            <span>Wait</span>
+                        </div>
+                        <div class="step-item" draggable="true" data-type="condition">
+                            <svg width="20" height="20" fill="currentColor">
+                                <path d="M10 2L4 10l6 8 6-8z"/>
+                            </svg>
+                            <span>If Condition</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">Properties</h3>
+                    <div id="properties-panel" class="properties-panel">
+                        <p class="empty-state">Select a step to view properties</p>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Canvas Area -->
+            <div class="canvas-container">
+                <div class="canvas-toolbar">
+                    <div class="toolbar-left">
+                        <button class="btn-icon" id="zoom-in">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="8" cy="8" r="6"/>
+                                <path d="M14 14l4 4M8 5v6M5 8h6"/>
+                            </svg>
+                        </button>
+                        <button class="btn-icon" id="zoom-out">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="8" cy="8" r="6"/>
+                                <path d="M14 14l4 4M5 8h6"/>
+                            </svg>
+                        </button>
+                        <button class="btn-icon" id="zoom-fit">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="14" height="14" rx="2"/>
+                                <path d="M7 7h6v6"/>
+                            </svg>
+                        </button>
+                        <span class="zoom-level">100%</span>
+                    </div>
+                    <div class="toolbar-right">
+                        <button class="btn-primary" id="open-vnc" style="margin-right: 12px;">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                                <line x1="8" y1="21" x2="16" y2="21"/>
+                                <line x1="12" y1="17" x2="12" y2="21"/>
+                            </svg>
+                            Open VNC Viewer
+                        </button>
+                        <button class="btn-icon" id="grid-toggle">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 3h14v14H3zM10 3v14M3 10h14"/>
+                            </svg>
+                        </button>
+                        <button class="btn-icon" id="auto-arrange">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="2" width="6" height="6" rx="1"/>
+                                <rect x="12" y="2" width="6" height="6" rx="1"/>
+                                <rect x="2" y="12" width="6" height="6" rx="1"/>
+                                <rect x="12" y="12" width="6" height="6" rx="1"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="canvas-wrapper">
+                    <canvas id="flow-canvas"></canvas>
+                    <div id="tiles-container" class="tiles-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="auth.js"></script>
+    <script src="canvas-flow-playwright.js"></script>
+</html>

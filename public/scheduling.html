@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule Test Suites - Visual Test Automation Platform</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .app-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .navbar {
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: white;
+        }
+        
+        .scheduling-page {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px 24px 100px 48px;
+            max-width: 100%;
+            margin: 0;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #E5E7EB;
+        }
+        
+        .page-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #111827;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 24px;
+            max-width: 1800px;
+        }
+        
+        .sidebar-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .main-section {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        
+        .scheduling-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        @media (max-width: 1400px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            .scheduling-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .schedule-card {
+            background: white;
+            border: 1px solid #E5E7EB;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .card-icon {
+            width: 32px;
+            height: 32px;
+            background: #3B82F6;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+        
+        .form-select, .form-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #D1D5DB;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+            transition: all 0.2s;
+        }
+        
+        .form-select:focus, .form-input:focus {
+            outline: none;
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .interval-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 12px;
+        }
+        
+        .interval-btn {
+            padding: 12px;
+            border: 2px solid #E5E7EB;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        
+        .interval-btn:hover {
+            border-color: #3B82F6;
+            background: #EFF6FF;
+        }
+        
+        .interval-btn.selected {
+            border-color: #3B82F6;
+            background: #3B82F6;
+            color: white;
+        }
+        
+        .interval-value {
+            font-size: 24px;
+            font-weight: 600;
+        }
+        
+        .interval-unit {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        
+        .custom-interval {
+            display: flex;
+            gap: 12px;
+            margin-top: 12px;
+        }
+        
+        .custom-interval input {
+            flex: 1;
+        }
+        
+        .custom-interval select {
+            flex: 1;
+        }
+        
+        .time-input-group {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        
+        .day-selector {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+        
+        .day-btn {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #E5E7EB;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .day-btn:hover {
+            border-color: #3B82F6;
+        }
+        
+        .day-btn.selected {
+            background: #3B82F6;
+            border-color: #3B82F6;
+            color: white;
+        }
+        
+        .schedule-btn {
+            width: 100%;
+            padding: 10px 16px;
+            background: #3B82F6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .schedule-btn:hover {
+            background: #2563EB;
+            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+        }
+        
+        .schedule-btn:disabled {
+            background: #9CA3AF;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* Upcoming Schedules Section */
+        .upcoming-section {
+            background: white;
+            border: 1px solid #E5E7EB;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .upcoming-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #E5E7EB;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .upcoming-list {
+            display: grid;
+            gap: 12px;
+        }
+        
+        .upcoming-item {
+            background: #F9FAFB;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+        }
+        
+        .upcoming-item:hover {
+            background: white;
+            border-color: #D1D5DB;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .upcoming-info {
+            flex: 1;
+        }
+        
+        .upcoming-suite {
+            font-weight: 600;
+            font-size: 14px;
+            color: #111827;
+        }
+        
+        .upcoming-time {
+            font-size: 12px;
+            color: #6B7280;
+            margin-top: 4px;
+        }
+        
+        .upcoming-countdown {
+            background: #EFF6FF;
+            color: #3B82F6;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        /* Active Schedules Table */
+        .schedules-section {
+            background: white;
+            border: 1px solid #E5E7EB;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 32px;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #111827;
+        }
+        
+        .schedules-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .schedules-table th {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 2px solid #E5E7EB;
+            font-size: 12px;
+            font-weight: 600;
+            color: #6B7280;
+            text-transform: uppercase;
+        }
+        
+        .schedules-table td {
+            padding: 12px;
+            border-bottom: 1px solid #F3F4F6;
+            font-size: 14px;
+            color: #374151;
+        }
+        
+        .schedules-table tr:hover {
+            background: #F9FAFB;
+        }
+        
+        .schedule-status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+        
+        .status-paused {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+        
+        .status-disabled {
+            background: #F3F4F6;
+            color: #6B7280;
+        }
+        
+        .schedule-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .action-btn {
+            padding: 6px 10px;
+            border: 1px solid #D1D5DB;
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        
+        .action-btn:hover {
+            background: #F3F4F6;
+            border-color: #9CA3AF;
+        }
+        
+        .action-btn.danger:hover {
+            background: #FEE2E2;
+            border-color: #F87171;
+            color: #991B1B;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 48px;
+            color: #9CA3AF;
+        }
+        
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="nav-left">
+                <div class="logo">
+                    <svg width="42" height="42" viewBox="0 0 42 42" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Infinity symbol with modern twist -->
+                        <path d="M11 21C11 17 7 13 7 21C7 29 11 25 15 21L27 21C31 17 35 13 35 21C35 29 31 25 27 21" fill="none" stroke="url(#viaGradient)" stroke-width="2.5" stroke-linecap="round"/>
+                        <!-- Center connection point -->
+                        <circle cx="21" cy="21" r="3" fill="url(#viaGradient)"/>
+                        <!-- Interactive nodes -->
+                        <circle cx="11" cy="21" r="2" fill="#3B82F6" opacity="0.8"/>
+                        <circle cx="31" cy="21" r="2" fill="#8B5CF6" opacity="0.8"/>
+                        <defs>
+                            <linearGradient id="viaGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#3B82F6;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#60A5FA;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#8B5CF6;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                    </svg>                    <span class="logo-text">VIA</span>
+                </div>
+                <div class="nav-tabs">
+                    <button class="nav-tab" onclick="window.location.href='home.html'">Home</button>
+                    <button class="nav-tab" onclick="window.location.href='index.html'">Visual Editor</button>
+                    <button class="nav-tab" onclick="window.location.href='test-runs.html'">Test Runs</button>
+                    <button class="nav-tab" onclick="window.location.href='templates.html'">Templates</button>
+                    <button class="nav-tab active">Scheduling</button>
+                    <button class="nav-tab" onclick="window.location.href='scheduled-history.html'">Scheduled History</button>
+                    <button class="nav-tab" onclick="window.location.href='history.html'">History</button>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Main Content -->
+        <div class="scheduling-page">
+            <div class="page-header">
+                <h1 class="page-title">Schedule Test Suites</h1>
+                <button class="btn-icon" onclick="schedulingManager.loadSchedules()">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="main-content">
+                <!-- Sidebar Section -->
+                <div class="sidebar-section">
+                    <!-- Upcoming Schedules -->
+                    <div class="upcoming-section" id="upcoming-section">
+                        <div class="upcoming-title">
+                            <svg width="20" height="20" fill="currentColor">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                            </svg>
+                            Upcoming Schedules
+                        </div>
+                        <div class="upcoming-list" id="upcoming-list">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="upcoming-section">
+                        <div class="upcoming-title">
+                            <svg width="20" height="20" fill="currentColor">
+                                <path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/>
+                            </svg>
+                            Quick Actions
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <button onclick="schedulingManager.loadSchedules()" style="padding: 8px 12px; background: #F3F4F6; border: 1px solid #D1D5DB; border-radius: 6px; font-size: 13px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#E5E7EB'" onmouseout="this.style.background='#F3F4F6'">
+                                Refresh Schedules
+                            </button>
+                            <button onclick="window.location.href='scheduled-history.html'" style="padding: 8px 12px; background: #F3F4F6; border: 1px solid #D1D5DB; border-radius: 6px; font-size: 13px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#E5E7EB'" onmouseout="this.style.background='#F3F4F6'">
+                                View History
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Main Section -->
+                <div class="main-section">
+                    <!-- Schedule Creation Forms -->
+                    <div class="scheduling-grid">
+                <!-- Interval-based Scheduling -->
+                <div class="schedule-card">
+                    <div class="card-title">
+                        <div class="card-icon">
+                            <svg width="20" height="20" fill="currentColor">
+                                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                            </svg>
+                        </div>
+                        Interval-Based Scheduling
+                    </div>
+                    
+                    <form id="interval-schedule-form">
+                        <div class="form-group">
+                            <label class="form-label">Select Suite</label>
+                            <select class="form-select" id="interval-suite-select" required>
+                                <option value="">Choose a suite...</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Run Every</label>
+                            <div class="interval-options">
+                                <button type="button" class="interval-btn" data-interval="10" data-unit="minutes">
+                                    <div class="interval-value">10</div>
+                                    <div class="interval-unit">minutes</div>
+                                </button>
+                                <button type="button" class="interval-btn" data-interval="30" data-unit="minutes">
+                                    <div class="interval-value">30</div>
+                                    <div class="interval-unit">minutes</div>
+                                </button>
+                                <button type="button" class="interval-btn" data-interval="1" data-unit="hour">
+                                    <div class="interval-value">1</div>
+                                    <div class="interval-unit">hour</div>
+                                </button>
+                                <button type="button" class="interval-btn" data-interval="6" data-unit="hours">
+                                    <div class="interval-value">6</div>
+                                    <div class="interval-unit">hours</div>
+                                </button>
+                                <button type="button" class="interval-btn" data-interval="1" data-unit="day">
+                                    <div class="interval-value">1</div>
+                                    <div class="interval-unit">day</div>
+                                </button>
+                                <button type="button" class="interval-btn" data-interval="custom" data-unit="custom">
+                                    <div class="interval-value">?</div>
+                                    <div class="interval-unit">custom</div>
+                                </button>
+                            </div>
+                            
+                            <div class="custom-interval" id="custom-interval" style="display: none;">
+                                <input type="number" class="form-input" id="custom-interval-value" min="1" placeholder="Value">
+                                <select class="form-select" id="custom-interval-unit">
+                                    <option value="minutes">Minutes</option>
+                                    <option value="hours">Hours</option>
+                                    <option value="days">Days</option>
+                                    <option value="weeks">Weeks</option>
+                                    <option value="months">Months</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Schedule Name (Optional)</label>
+                            <input type="text" class="form-input" id="interval-schedule-name" placeholder="e.g., Hourly regression test">
+                        </div>
+                        
+                        <button type="submit" class="schedule-btn">Create Interval Schedule</button>
+                    </form>
+                </div>
+                
+                <!-- Time-based Scheduling -->
+                <div class="schedule-card">
+                    <div class="card-title">
+                        <div class="card-icon">
+                            <svg width="20" height="20" fill="currentColor">
+                                <path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/>
+                            </svg>
+                        </div>
+                        Time-Based Scheduling
+                    </div>
+                    
+                    <form id="time-schedule-form">
+                        <div class="form-group">
+                            <label class="form-label">Select Suite</label>
+                            <select class="form-select" id="time-suite-select" required>
+                                <option value="">Choose a suite...</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Run At</label>
+                            <div class="time-input-group">
+                                <input type="time" class="form-input" id="schedule-time" required>
+                                <select class="form-select" id="timezone">
+                                    <option value="local">Local Time</option>
+                                    <option value="UTC">UTC</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Repeat</label>
+                            <select class="form-select" id="repeat-frequency">
+                                <option value="once">Once</option>
+                                <option value="daily">Daily</option>
+                                <option value="weekdays">Weekdays Only</option>
+                                <option value="weekends">Weekends Only</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="monthly">Monthly</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group" id="day-selector-group" style="display: none;">
+                            <label class="form-label">Select Days</label>
+                            <div class="day-selector">
+                                <button type="button" class="day-btn" data-day="0">S</button>
+                                <button type="button" class="day-btn" data-day="1">M</button>
+                                <button type="button" class="day-btn" data-day="2">T</button>
+                                <button type="button" class="day-btn" data-day="3">W</button>
+                                <button type="button" class="day-btn" data-day="4">T</button>
+                                <button type="button" class="day-btn" data-day="5">F</button>
+                                <button type="button" class="day-btn" data-day="6">S</button>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Schedule Name (Optional)</label>
+                            <input type="text" class="form-input" id="time-schedule-name" placeholder="e.g., Daily morning test">
+                        </div>
+                        
+                        <button type="submit" class="schedule-btn">Create Time Schedule</button>
+                    </form>
+                </div>
+                    </div>
+                    
+                    <!-- Active Schedules -->
+                    <div class="schedules-section">
+                        <div class="section-header">
+                            <h2 class="section-title">Active Schedules</h2>
+                            <span id="schedule-count" style="color: #6B7280; font-size: 14px;">0 schedules</span>
+                        </div>
+                        
+                        <div id="schedules-content">
+                            <!-- Will be populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="auth.js"></script>
+    <script src="scheduling.js"></script>
+</html>

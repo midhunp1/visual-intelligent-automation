@@ -1,0 +1,1655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Results Dashboard - VIA Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+            background: #f8f9fa;
+            color: #2d3436;
+            line-height: 1.6;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            height: 56px;
+            background: white;
+            border-bottom: 1px solid #E5E7EB;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #6366F1, #8B5CF6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 4px;
+        }
+
+        .nav-tab {
+            padding: 8px 16px;
+            background: transparent;
+            border: none;
+            color: #4B5563;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .nav-tab:hover {
+            background: #F3F4F6;
+            color: #111827;
+        }
+
+        .nav-tab.active {
+            background: #6366F1;
+            color: white;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-icon {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border: 1px solid #D1D5DB;
+            border-radius: 6px;
+            color: #4B5563;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-icon:hover {
+            background: #F9FAFB;
+            color: #111827;
+            border-color: #9CA3AF;
+        }
+
+        /* Summary Stats */
+        .summary-section {
+            background: white;
+            margin: 20px auto;
+            max-width: 1400px;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .summary-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .summary-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d3436;
+        }
+
+        .time-filter {
+            display: flex;
+            gap: 8px;
+        }
+
+        .filter-btn {
+            padding: 6px 12px;
+            border: 1px solid #dee2e6;
+            background: white;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            background: #f8f9fa;
+        }
+
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 600;
+            color: #2d3436;
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+
+        .stat-unit {
+            font-size: 14px;
+            color: #6c757d;
+            font-weight: 400;
+        }
+
+        .stat-change {
+            font-size: 12px;
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .stat-change.positive {
+            color: #10b981;
+        }
+
+        .stat-change.negative {
+            color: #ef4444;
+        }
+
+        /* Test Runs Table */
+        .runs-section {
+            max-width: 1400px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        .runs-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .runs-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2d3436;
+        }
+
+        .runs-table {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .run-row {
+            display: grid;
+            grid-template-columns: 40px 2fr 100px 140px 100px 120px;
+            padding: 16px 20px;
+            border-bottom: 1px solid #f1f3f5;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .run-row:hover {
+            background: #f8f9fa;
+        }
+
+        .run-row.header {
+            background: #f8f9fa;
+            font-size: 12px;
+            font-weight: 600;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: default;
+        }
+
+        .run-row.header:hover {
+            background: #f8f9fa;
+        }
+
+        .status-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .status-icon.passed {
+            background: #d4f4dd;
+            color: #10b981;
+        }
+
+        .status-icon.failed {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+
+        .status-icon.running {
+            background: #fef3c7;
+            color: #f59e0b;
+            animation: pulse 2s infinite;
+        }
+
+        .status-icon.skipped {
+            background: #e5e7eb;
+            color: #6b7280;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .run-name {
+            font-weight: 500;
+            color: #2d3436;
+        }
+
+        .run-meta {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 2px;
+        }
+
+        .run-status {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .run-status.passed {
+            background: #d4f4dd;
+            color: #059669;
+        }
+
+        .run-status.failed {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .run-status.running {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .run-status.skipped {
+            background: #f3f4f6;
+            color: #4b5563;
+        }
+
+        .run-date {
+            color: #6c757d;
+            font-size: 13px;
+        }
+
+        .run-duration {
+            color: #6c757d;
+            font-size: 13px;
+        }
+
+        .run-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .action-btn {
+            padding: 6px;
+            background: transparent;
+            border: none;
+            color: #6c757d;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: #f1f3f5;
+            color: #2d3436;
+        }
+
+        /* Detailed View Modal */
+        .detail-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .detail-modal.active {
+            display: block;
+        }
+
+        .detail-content {
+            background: white;
+            margin: 40px auto;
+            max-width: 1400px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .detail-header {
+            background: white;
+            padding: 20px 24px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .detail-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d3436;
+        }
+
+        .close-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: #f1f3f5;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .close-btn:hover {
+            background: #e9ecef;
+        }
+
+        /* Video and Timeline Section */
+        .video-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+
+        .video-panel {
+            background: black;
+            border-radius: 8px;
+            position: relative;
+            aspect-ratio: 16/9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .video-player {
+            width: 100%;
+            height: calc(100% - 60px);
+            background: #000;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .video-timeline-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: rgba(0, 0, 0, 0.9);
+            border-radius: 0 0 8px 8px;
+            padding: 10px 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .video-timeline {
+            position: relative;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        .video-progress {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            background: linear-gradient(90deg, #3B82F6, #8B5CF6);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.1s;
+        }
+
+        .timeline-marker {
+            position: absolute;
+            top: -4px;
+            width: 16px;
+            height: 16px;
+            background: #EF4444;
+            border: 2px solid white;
+            border-radius: 50%;
+            cursor: pointer;
+            transform: translateX(-50%);
+            z-index: 10;
+            transition: transform 0.2s;
+        }
+
+        .timeline-marker:hover {
+            transform: translateX(-50%) scale(1.3);
+        }
+
+        .timeline-marker.warning {
+            background: #F59E0B;
+        }
+
+        .timeline-marker.success {
+            background: #10B981;
+        }
+
+        .marker-tooltip {
+            position: absolute;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.95);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            z-index: 20;
+        }
+
+        .marker-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: rgba(0, 0, 0, 0.95);
+        }
+
+        .timeline-marker:hover .marker-tooltip {
+            opacity: 1;
+        }
+
+        .video-time-display {
+            color: white;
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .video-placeholder {
+            color: white;
+            text-align: center;
+        }
+
+        .video-controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .play-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+
+        .play-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .timeline {
+            flex: 1;
+            height: 6px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 3px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .timeline-progress {
+            height: 100%;
+            background: #667eea;
+            border-radius: 3px;
+            width: 35%;
+            position: relative;
+        }
+
+        .timeline-marker {
+            position: absolute;
+            top: -4px;
+            width: 14px;
+            height: 14px;
+            background: white;
+            border-radius: 50%;
+            border: 2px solid #667eea;
+            right: -7px;
+        }
+
+        .failure-marker {
+            position: absolute;
+            top: -8px;
+            width: 4px;
+            height: 22px;
+            background: #ef4444;
+            border-radius: 2px;
+        }
+
+        .time-display {
+            color: white;
+            font-size: 12px;
+            min-width: 80px;
+        }
+
+        /* Logs Panel */
+        .logs-panel {
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            max-height: 500px;
+        }
+
+        .logs-header {
+            padding: 16px;
+            border-bottom: 1px solid #e9ecef;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .logs-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px;
+        }
+
+        .log-entry {
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-bottom: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: start;
+            gap: 12px;
+            font-size: 13px;
+        }
+
+        .log-entry:hover {
+            background: #f8f9fa;
+        }
+
+        .log-entry.active {
+            background: #eef2ff;
+            border: 1px solid #c7d2fe;
+        }
+
+        .log-entry.error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+        }
+
+        .log-entry.skipped {
+            background: #f3f4f6;
+            border: 1px solid #d1d5db;
+            opacity: 0.7;
+        }
+
+        .log-time {
+            color: #6c757d;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 11px;
+            min-width: 60px;
+        }
+
+        .log-status {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            flex-shrink: 0;
+        }
+
+        .log-status.success {
+            background: #d4f4dd;
+            color: #10b981;
+        }
+
+        .log-status.error {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+
+        .log-status.skipped {
+            background: #e5e7eb;
+            color: #6b7280;
+        }
+
+        .log-text {
+            flex: 1;
+            color: #2d3436;
+        }
+
+        /* Screenshots Section */
+        .screenshots-section {
+            padding: 20px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .screenshots-header {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #2d3436;
+        }
+
+        .screenshots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .screenshot-card {
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #e9ecef;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .screenshot-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .screenshot-card.failure {
+            border-color: #ef4444;
+        }
+
+        .screenshot-img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            background: #f8f9fa;
+        }
+
+        .screenshot-info {
+            padding: 8px 12px;
+            background: white;
+        }
+
+        .screenshot-step {
+            font-size: 12px;
+            font-weight: 500;
+            color: #2d3436;
+        }
+
+        .screenshot-time {
+            font-size: 11px;
+            color: #6c757d;
+            margin-top: 2px;
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f3f4f6;
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            background: #f3f4f6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 32px;
+        }
+
+        .empty-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d3436;
+            margin-bottom: 8px;
+        }
+
+        .empty-text {
+            font-size: 14px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .run-row {
+                grid-template-columns: 40px 1fr;
+                gap: 12px;
+            }
+
+            .run-row > *:not(:first-child):not(:nth-child(2)) {
+                display: none;
+            }
+
+            .video-section {
+                grid-template-columns: 1fr;
+            }
+
+            .logs-panel {
+                max-height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <div class="logo">
+                <svg width="42" height="42" viewBox="0 0 42 42" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Infinity symbol with modern twist -->
+                    <path d="M11 21C11 17 7 13 7 21C7 29 11 25 15 21L27 21C31 17 35 13 35 21C35 29 31 25 27 21" fill="none" stroke="url(#viaGradient)" stroke-width="2.5" stroke-linecap="round"/>
+                    <!-- Center connection point -->
+                    <circle cx="21" cy="21" r="3" fill="url(#viaGradient)"/>
+                    <!-- Interactive nodes -->
+                    <circle cx="11" cy="21" r="2" fill="#3B82F6" opacity="0.8"/>
+                    <circle cx="31" cy="21" r="2" fill="#8B5CF6" opacity="0.8"/>
+                    <defs>
+                        <linearGradient id="viaGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#3B82F6;stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:#60A5FA;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#8B5CF6;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <span class="logo-text">VIA</span>
+            </div>
+            <div class="nav-tabs">
+                <button class="nav-tab" onclick="window.location.href='home.html'">Home</button>
+                <button class="nav-tab" onclick="window.location.href='/'">Visual Editor</button>
+                <button class="nav-tab" onclick="window.location.href='test-runs.html'">Test Runs</button>
+                <button class="nav-tab" onclick="window.location.href='templates.html'">Templates</button>
+                <button class="nav-tab" onclick="window.location.href='scheduling.html'">Scheduling</button>
+                <button class="nav-tab" onclick="window.location.href='scheduled-history.html'">Scheduled History</button>
+                <button class="nav-tab active" onclick="window.location.href='history.html'">History</button>
+                <button class="nav-tab" onclick="window.location.href='analytics.html'">Analytics</button>
+            </div>
+        </div>
+        <div class="nav-right">
+            <button class="btn-icon">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="10" cy="10" r="8"/>
+                    <path d="M10 6v4l3 3"/>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Summary Statistics -->
+    <div class="summary-section">
+        <div class="summary-header">
+            <h2 class="summary-title">Execution Summary</h2>
+            <div class="time-filter">
+                <button class="filter-btn active" onclick="filterByTime('day')">24 Hours</button>
+                <button class="filter-btn" onclick="filterByTime('week')">7 Days</button>
+                <button class="filter-btn" onclick="filterByTime('month')">30 Days</button>
+                <button class="filter-btn" onclick="filterByTime('all')">All Time</button>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Runs</div>
+                <div class="stat-value">
+                    <span id="totalRuns">0</span>
+                </div>
+                <div class="stat-change positive">
+                    <span>↑ 12% from last period</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">Passed</div>
+                <div class="stat-value" style="color: #10b981;">
+                    <span id="passedRuns">0</span>
+                    <span class="stat-unit" id="passRate">(0%)</span>
+                </div>
+                <div class="stat-change positive">
+                    <span>↑ 5% improvement</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">Failed</div>
+                <div class="stat-value" style="color: #ef4444;">
+                    <span id="failedRuns">0</span>
+                    <span class="stat-unit" id="failRate">(0%)</span>
+                </div>
+                <div class="stat-change negative">
+                    <span>↓ 3% reduction</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">Average Duration</div>
+                <div class="stat-value">
+                    <span id="avgDuration">0</span>
+                    <span class="stat-unit">sec</span>
+                </div>
+                <div class="stat-change positive">
+                    <span>↓ 8% faster</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">Running Now</div>
+                <div class="stat-value" style="color: #f59e0b;">
+                    <span id="runningRuns">0</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">Success Rate</div>
+                <div class="stat-value">
+                    <span id="successRate">0</span>
+                    <span class="stat-unit">%</span>
+                </div>
+                <div class="stat-change positive">
+                    <span>↑ Above target</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Test Runs List -->
+    <div class="runs-section">
+        <div class="runs-header">
+            <h3 class="runs-title">Recent Test Runs</h3>
+            <button class="filter-btn" onclick="refreshHistory()">
+                <span style="margin-right: 6px;">↻</span> Refresh
+            </button>
+        </div>
+
+        <div class="runs-table">
+            <!-- Header Row -->
+            <div class="run-row header">
+                <div></div>
+                <div>Test Name</div>
+                <div>Status</div>
+                <div>Date & Time</div>
+                <div>Duration</div>
+                <div style="text-align: right;">Actions</div>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loadingState" class="loading">
+                <div class="spinner"></div>
+                <div>Loading test results...</div>
+            </div>
+
+            <!-- Runs Container -->
+            <div id="runsContainer"></div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <div class="empty-icon">📋</div>
+                <div class="empty-title">No Test Runs Yet</div>
+                <div class="empty-text">Run your first test suite to see results here</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detail View Modal -->
+    <div id="detailModal" class="detail-modal">
+        <div class="detail-content">
+            <div class="detail-header">
+                <h3 class="detail-title" id="detailTitle">Test Run Details</h3>
+                <button class="close-btn" onclick="closeDetail()">✕</button>
+            </div>
+
+            <!-- Video and Timeline -->
+            <div class="video-section">
+                <div class="video-panel">
+                    <video id="testVideo" class="video-player" controls>
+                        <source src="" type="video/webm">
+                        Your browser does not support the video tag.
+                    </video>
+                    <div class="video-timeline-container" id="videoTimelineContainer" style="display: none;">
+                        <div class="video-timeline" id="videoTimeline">
+                            <div class="video-progress" id="videoProgress"></div>
+                            <!-- Markers will be added dynamically -->
+                        </div>
+                        <div class="video-time-display">
+                            <span id="currentTime">0:00</span>
+                            <span id="stepInfo" style="color: #94A3B8;">Click on markers to jump to failures</span>
+                            <span id="duration">0:00</span>
+                        </div>
+                    </div>
+                    <div class="video-placeholder" id="videoPlaceholder" style="display: none;">
+                        <div style="font-size: 48px; margin-bottom: 16px;">📹</div>
+                        <div>No Video Available</div>
+                        <div style="font-size: 12px; opacity: 0.7; margin-top: 8px;">
+                            Video recording was not enabled for this test
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Logs Panel -->
+                <div class="logs-panel">
+                    <div class="logs-header">Execution Logs</div>
+                    <div class="logs-list" id="logsContainer">
+                        <!-- Logs will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Screenshots Section -->
+            <div class="screenshots-section">
+                <div class="screenshots-header">Screenshots & Key Frames</div>
+                <div class="screenshots-grid" id="screenshotsContainer">
+                    <!-- Screenshots will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let executionHistory = [];
+        let currentFilter = 'day';
+        let selectedRun = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadHistory();
+            setInterval(updateRunningTimes, 1000);
+        });
+
+        async function loadHistory() {
+            try {
+                const response = await fetch('/api/test-runs/history?limit=100');
+                const data = await response.json();
+                
+                if (data.success) {
+                    executionHistory = data.data.history;
+                    displayHistory(executionHistory);
+                    updateStats(executionHistory);
+                }
+            } catch (error) {
+                console.error('Error loading history:', error);
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'block';
+            }
+        }
+
+        function displayHistory(history) {
+            const container = document.getElementById('runsContainer');
+            const loadingState = document.getElementById('loadingState');
+            const emptyState = document.getElementById('emptyState');
+            
+            loadingState.style.display = 'none';
+            
+            if (!history || history.length === 0) {
+                emptyState.style.display = 'block';
+                container.innerHTML = '';
+                return;
+            }
+            
+            emptyState.style.display = 'none';
+            container.innerHTML = history.map(run => createRunRow(run)).join('');
+        }
+
+        function createRunRow(run) {
+            const statusIcon = getStatusIcon(run.status);
+            const statusClass = getStatusClass(run.status);
+            const runDate = new Date(run.startTime);
+            const isRunning = run.status === 'running';
+            
+            return `
+                <div class="run-row" onclick="showDetail('${run.id}')">
+                    <div class="status-icon ${statusClass}">
+                        ${statusIcon}
+                    </div>
+                    <div>
+                        <div class="run-name">${run.name}</div>
+                        <div class="run-meta">
+                            ${run.type === 'suite' ? 'Test Suite' : 'Single Test'}
+                            ${run.scripts ? ` • ${run.scripts.length} scripts` : ''}
+                        </div>
+                    </div>
+                    <div>
+                        <span class="run-status ${statusClass}">
+                            ${run.status.charAt(0).toUpperCase() + run.status.slice(1)}
+                        </span>
+                    </div>
+                    <div class="run-date">
+                        ${formatDate(runDate)}
+                    </div>
+                    <div class="run-duration" data-start="${run.startTime}" data-running="${isRunning}">
+                        ${isRunning ? calculateDuration(run.startTime) : (run.durationFormatted || '-')}
+                    </div>
+                    <div class="run-actions">
+                        <button class="action-btn" onclick="event.stopPropagation(); downloadReport('${run.id}')" title="Download Report">
+                            📥
+                        </button>
+                        <button class="action-btn" onclick="event.stopPropagation(); rerunTest('${run.id}')" title="Rerun Test">
+                            🔄
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getStatusIcon(status) {
+            switch(status) {
+                case 'success': return '✓';
+                case 'failed': return '✕';
+                case 'running': return '⏳';
+                case 'skipped': return '—';
+                default: return '?';
+            }
+        }
+
+        function getStatusClass(status) {
+            switch(status) {
+                case 'success': return 'passed';
+                case 'failed': return 'failed';
+                case 'running': return 'running';
+                case 'skipped': return 'skipped';
+                default: return '';
+            }
+        }
+
+        function formatDate(date) {
+            const now = new Date();
+            const diff = now - date;
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(diff / 3600000);
+            const days = Math.floor(diff / 86400000);
+            
+            if (minutes < 1) return 'Just now';
+            if (minutes < 60) return `${minutes}m ago`;
+            if (hours < 24) return `${hours}h ago`;
+            if (days < 7) return `${days}d ago`;
+            
+            return date.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function calculateDuration(startTime) {
+            const start = new Date(startTime);
+            const now = new Date();
+            const diff = Math.floor((now - start) / 1000);
+            
+            const minutes = Math.floor(diff / 60);
+            const seconds = diff % 60;
+            
+            if (minutes > 0) {
+                return `${minutes}m ${seconds}s`;
+            }
+            return `${seconds}s`;
+        }
+
+        function updateRunningTimes() {
+            document.querySelectorAll('.run-duration[data-running="true"]').forEach(el => {
+                const startTime = el.dataset.start;
+                el.textContent = calculateDuration(startTime);
+            });
+        }
+
+        function updateStats(history) {
+            const total = history.length;
+            const passed = history.filter(r => r.status === 'success').length;
+            const failed = history.filter(r => r.status === 'failed').length;
+            const running = history.filter(r => r.status === 'running').length;
+            
+            const durations = history
+                .filter(r => r.duration && r.status !== 'running')
+                .map(r => r.duration);
+            
+            const avgDuration = durations.length > 0 
+                ? Math.round(durations.reduce((a, b) => a + b, 0) / durations.length / 1000)
+                : 0;
+            
+            const successRate = total > 0 ? Math.round((passed / total) * 100) : 0;
+            
+            document.getElementById('totalRuns').textContent = total;
+            document.getElementById('passedRuns').textContent = passed;
+            document.getElementById('failedRuns').textContent = failed;
+            document.getElementById('runningRuns').textContent = running;
+            document.getElementById('avgDuration').textContent = avgDuration;
+            document.getElementById('successRate').textContent = successRate;
+            
+            document.getElementById('passRate').textContent = `(${total > 0 ? Math.round((passed/total)*100) : 0}%)`;
+            document.getElementById('failRate').textContent = `(${total > 0 ? Math.round((failed/total)*100) : 0}%)`;
+        }
+
+        function showDetail(runId) {
+            selectedRun = executionHistory.find(r => r.id === runId);
+            if (!selectedRun) return;
+            
+            document.getElementById('detailTitle').textContent = selectedRun.name;
+            
+            // Load video if available
+            loadVideo(selectedRun);
+            
+            // Populate logs
+            populateLogs(selectedRun);
+            
+            // Populate screenshots
+            populateScreenshots(selectedRun);
+            
+            // Show modal
+            document.getElementById('detailModal').classList.add('active');
+        }
+
+        function loadVideo(run) {
+            const video = document.getElementById('testVideo');
+            const placeholder = document.getElementById('videoPlaceholder');
+            const timelineContainer = document.getElementById('videoTimelineContainer');
+            
+            // Try to load video for this test run
+            const videoUrl = `/api/test-runs/video/${run.id}`;
+            
+            // Check if video exists
+            fetch(videoUrl, { method: 'HEAD' })
+                .then(response => {
+                    if (response.ok) {
+                        // Video exists, show video player
+                        video.src = videoUrl;
+                        video.style.display = 'block';
+                        placeholder.style.display = 'none';
+                        timelineContainer.style.display = 'flex';
+                        video.load();
+                        
+                        // Set up video timeline when metadata loads
+                        video.addEventListener('loadedmetadata', () => {
+                            setupVideoTimeline(video, run);
+                        });
+                        
+                        // Update progress bar as video plays
+                        video.addEventListener('timeupdate', () => {
+                            updateVideoProgress(video);
+                        });
+                    } else {
+                        // No video, show placeholder
+                        video.style.display = 'none';
+                        placeholder.style.display = 'flex';
+                        timelineContainer.style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking video:', error);
+                    video.style.display = 'none';
+                    placeholder.style.display = 'flex';
+                    timelineContainer.style.display = 'none';
+                });
+        }
+        
+        function setupVideoTimeline(video, run) {
+            const timeline = document.getElementById('videoTimeline');
+            const duration = video.duration;
+            
+            // Clear existing markers
+            timeline.querySelectorAll('.timeline-marker').forEach(m => m.remove());
+            
+            // Calculate step timings and add markers
+            if (run.scripts && duration > 0) {
+                let totalSteps = 0;
+                run.scripts.forEach(script => {
+                    totalSteps += script.totalSteps;
+                });
+                
+                const stepDuration = duration / totalSteps;
+                let currentStep = 0;
+                
+                run.scripts.forEach((script, scriptIdx) => {
+                    for (let i = 0; i < script.totalSteps; i++) {
+                        const stepNum = i + 1;
+                        const timestamp = currentStep * stepDuration;
+                        const percentage = (timestamp / duration) * 100;
+                        
+                        // Check if this step failed
+                        const isFailed = script.failedAt && script.failedAt.includes(`Step ${stepNum}`);
+                        const isLastCompleted = script.completedSteps === stepNum && script.status === 'failed';
+                        
+                        if (isFailed || isLastCompleted) {
+                            // Add failure marker
+                            const marker = createTimelineMarker(
+                                percentage,
+                                timestamp,
+                                `${script.name} - Step ${stepNum}`,
+                                'failed',
+                                run.failureDetails?.attemptedAction || 'Action failed'
+                            );
+                            timeline.appendChild(marker);
+                        } else if (i === 0) {
+                            // Add script start marker
+                            const marker = createTimelineMarker(
+                                percentage,
+                                timestamp,
+                                `Start: ${script.name}`,
+                                'success',
+                                'Script started'
+                            );
+                            timeline.appendChild(marker);
+                        }
+                        
+                        currentStep++;
+                    }
+                });
+            }
+            
+            // Update duration display
+            document.getElementById('duration').textContent = formatTime(duration);
+            
+            // Add click handler to timeline for seeking
+            timeline.addEventListener('click', (e) => {
+                if (!e.target.classList.contains('timeline-marker')) {
+                    const rect = timeline.getBoundingClientRect();
+                    const percentage = ((e.clientX - rect.left) / rect.width) * 100;
+                    video.currentTime = (percentage / 100) * video.duration;
+                }
+            });
+        }
+        
+        function createTimelineMarker(percentage, timestamp, title, type, description) {
+            const marker = document.createElement('div');
+            marker.className = `timeline-marker ${type === 'failed' ? '' : type}`;
+            marker.style.left = `${percentage}%`;
+            
+            // Add tooltip
+            const tooltip = document.createElement('div');
+            tooltip.className = 'marker-tooltip';
+            tooltip.innerHTML = `
+                <strong>${title}</strong><br>
+                <span style="color: #94A3B8;">${formatTime(timestamp)}</span><br>
+                <span style="color: ${type === 'failed' ? '#EF4444' : '#10B981'};">${description}</span>
+            `;
+            marker.appendChild(tooltip);
+            
+            // Click to seek to this position
+            marker.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const video = document.getElementById('testVideo');
+                video.currentTime = timestamp;
+                
+                // Update step info
+                document.getElementById('stepInfo').textContent = title;
+                document.getElementById('stepInfo').style.color = type === 'failed' ? '#EF4444' : '#10B981';
+            });
+            
+            return marker;
+        }
+        
+        function updateVideoProgress(video) {
+            const progress = document.getElementById('videoProgress');
+            const currentTimeEl = document.getElementById('currentTime');
+            
+            const percentage = (video.currentTime / video.duration) * 100;
+            progress.style.width = `${percentage}%`;
+            currentTimeEl.textContent = formatTime(video.currentTime);
+        }
+        
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function populateLogs(run) {
+            const container = document.getElementById('logsContainer');
+            const logs = [];
+            
+            // Generate sample logs based on run data
+            if (run.scripts) {
+                let hasFailure = false;
+                
+                run.scripts.forEach((script, idx) => {
+                    const baseTime = new Date(run.startTime).getTime();
+                    
+                    // If previous script failed, mark this one as skipped
+                    if (hasFailure) {
+                        logs.push({
+                            time: formatLogTime(baseTime + idx * 10000),
+                            status: 'skipped',
+                            text: `Script skipped: ${script.name} (previous script failed)`
+                        });
+                        return;
+                    }
+                    
+                    // Add script start log
+                    logs.push({
+                        time: formatLogTime(baseTime + idx * 10000),
+                        status: 'success',
+                        text: `Starting script: ${script.name}`
+                    });
+                    
+                    // Track if this script fails
+                    let scriptFailed = false;
+                    
+                    // Add steps
+                    for (let i = 0; i < script.totalSteps; i++) {
+                        const stepTime = baseTime + idx * 10000 + (i + 1) * 1000;
+                        const isFailed = script.failedAt && script.failedAt.includes(`Step ${i + 1}`);
+                        
+                        if (scriptFailed) {
+                            // If a previous step failed, mark remaining steps as unexecuted
+                            logs.push({
+                                time: formatLogTime(stepTime),
+                                status: 'skipped',
+                                text: `Step ${i + 1}: Not executed (previous step failed)`
+                            });
+                        } else if (isFailed) {
+                            // This step failed
+                            logs.push({
+                                time: formatLogTime(stepTime),
+                                status: 'error',
+                                text: run.failureDetails && run.failureDetails.attemptedAction 
+                                    ? `Step ${i + 1} Failed: ${run.failureDetails.attemptedAction}`
+                                    : `Step ${i + 1}: Failed`
+                            });
+                            scriptFailed = true;
+                            hasFailure = true;
+                        } else {
+                            // This step passed
+                            logs.push({
+                                time: formatLogTime(stepTime),
+                                status: 'success',
+                                text: `Step ${i + 1}: Action completed`
+                            });
+                        }
+                    }
+                });
+            }
+            
+            container.innerHTML = logs.map((log, idx) => {
+                let statusIcon = '✓';
+                let entryClass = '';
+                
+                if (log.status === 'error') {
+                    statusIcon = '✕';
+                    entryClass = 'error';
+                } else if (log.status === 'skipped') {
+                    statusIcon = '⊘';
+                    entryClass = 'skipped';
+                }
+                
+                return `
+                    <div class="log-entry ${entryClass}" onclick="highlightLog(${idx})">
+                        <div class="log-time">${log.time}</div>
+                        <div class="log-status ${log.status}">
+                            ${statusIcon}
+                        </div>
+                        <div class="log-text">${log.text}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function populateScreenshots(run) {
+            const container = document.getElementById('screenshotsContainer');
+            const screenshots = [];
+            
+            // Generate sample screenshots based on run data
+            if (run.scripts) {
+                run.scripts.forEach((script, idx) => {
+                    // Add key frames
+                    screenshots.push({
+                        step: `Script ${idx + 1} Start`,
+                        time: '00:00',
+                        isFailure: false
+                    });
+                    
+                    if (script.status === 'failed' && script.failedAt) {
+                        screenshots.push({
+                            step: script.failedAt,
+                            time: '00:35',
+                            isFailure: true
+                        });
+                    }
+                });
+            }
+            
+            container.innerHTML = screenshots.map(shot => `
+                <div class="screenshot-card ${shot.isFailure ? 'failure' : ''}"
+                     onclick="jumpToScreenshot('${shot.time}')">
+                    <div class="screenshot-img" style="
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 48px;
+                        background: ${shot.isFailure ? '#fef2f2' : '#f8f9fa'};
+                    ">
+                        ${shot.isFailure ? '❌' : '📸'}
+                    </div>
+                    <div class="screenshot-info">
+                        <div class="screenshot-step">${shot.step}</div>
+                        <div class="screenshot-time">at ${shot.time}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function formatLogTime(timestamp) {
+            const date = new Date(timestamp);
+            const seconds = date.getSeconds();
+            const millis = date.getMilliseconds();
+            return `${String(seconds).padStart(2, '0')}.${String(millis).padStart(3, '0')}s`;
+        }
+
+        function highlightLog(index) {
+            document.querySelectorAll('.log-entry').forEach((el, idx) => {
+                if (idx === index) {
+                    el.classList.add('active');
+                    // Simulate video seek
+                    updateVideoTime(index * 2);
+                } else {
+                    el.classList.remove('active');
+                }
+            });
+        }
+
+        function updateVideoTime(seconds) {
+            // Update timeline progress
+            const progress = Math.min((seconds / 102) * 100, 100);
+            document.querySelector('.timeline-progress').style.width = `${progress}%`;
+            
+            // Update time display
+            const minutes = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            const timeStr = `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+            document.querySelector('.time-display').textContent = `${timeStr} / 01:42`;
+        }
+
+        function closeDetail() {
+            document.getElementById('detailModal').classList.remove('active');
+            selectedRun = null;
+        }
+
+        function togglePlay() {
+            const btn = event.target;
+            btn.textContent = btn.textContent === '▶' ? '❚❚' : '▶';
+        }
+
+        function seekVideo(event) {
+            const timeline = event.currentTarget;
+            const rect = timeline.getBoundingClientRect();
+            const percent = (event.clientX - rect.left) / rect.width;
+            const seconds = Math.floor(percent * 102);
+            updateVideoTime(seconds);
+        }
+
+        function jumpToScreenshot(time) {
+            // Parse time and seek
+            const [mins, secs] = time.split(':').map(Number);
+            const totalSeconds = (mins || 0) * 60 + (secs || 0);
+            updateVideoTime(totalSeconds);
+        }
+
+        function filterByTime(period) {
+            currentFilter = period;
+            document.querySelectorAll('.time-filter .filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Filter history based on period
+            const now = new Date();
+            let filtered = executionHistory;
+            
+            if (period !== 'all') {
+                const hours = period === 'day' ? 24 : period === 'week' ? 168 : 720;
+                const cutoff = new Date(now - hours * 60 * 60 * 1000);
+                filtered = executionHistory.filter(r => new Date(r.startTime) > cutoff);
+            }
+            
+            displayHistory(filtered);
+            updateStats(filtered);
+        }
+
+        function refreshHistory() {
+            document.getElementById('loadingState').style.display = 'block';
+            document.getElementById('runsContainer').innerHTML = '';
+            loadHistory();
+        }
+
+        function downloadReport(runId) {
+            console.log('Downloading report for run:', runId);
+            // Implement report download
+        }
+
+        function rerunTest(runId) {
+            const run = executionHistory.find(r => r.id === runId);
+            if (run && run.suiteId) {
+                if (confirm(`Rerun "${run.name}"?`)) {
+                    fetch(`/api/test-runs/suites/${run.suiteId}/execute`, {
+                        method: 'POST'
+                    }).then(() => {
+                        setTimeout(refreshHistory, 1000);
+                    });
+                }
+            }
+        }
+    </script>
+</body>
+</html>

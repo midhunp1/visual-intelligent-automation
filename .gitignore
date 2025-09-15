@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Environment
+.env
+.env.local
+
+# Data files
+data/*.json
+auth-states/
+recordings/
+screenshots/
+test-videos/
+templates/*.js
+
+# Logs
+*.log
+server.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Backup files
+*-backup.js
+backup-*/
+automation-scripts-backup/

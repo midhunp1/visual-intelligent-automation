@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Visual Test Automation Platform</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .app-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .navbar {
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: white;
+        }
+        
+        .home-page {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 24px 100px 48px;
+            max-width: 100%;
+            margin: 0;
+            background: #F9FAFB;
+        }
+        
+        .page-header {
+            margin-bottom: 32px;
+        }
+        
+        .page-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+        
+        .page-subtitle {
+            font-size: 16px;
+            color: #6B7280;
+            margin: 0;
+        }
+        
+        /* Quick Actions */
+        .quick-actions {
+            background: white;
+            border: 1px solid #E5E7EB;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 32px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #E5E7EB;
+        }
+        
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+        
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 20px;
+            background: white;
+            border: 2px solid #E5E7EB;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            color: #374151;
+        }
+        
+        .action-btn:hover {
+            border-color: #3B82F6;
+            background: #F8FAFC;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+        }
+        
+        .action-icon {
+            width: 40px;
+            height: 40px;
+            background: #3B82F6;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .action-content {
+            flex: 1;
+        }
+        
+        .action-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 4px;
+        }
+        
+        .action-desc {
+            font-size: 13px;
+            color: #6B7280;
+            margin: 0;
+        }
+        
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        
+        @media (max-width: 1200px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        
+        .sidebar-content {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        
+        /* Stats Cards */
+        .stats-section {
+            background: white;
+            border: 1px solid #E5E7EB;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+        }
+        
+        .stat-card {
+            background: #F9FAFB;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        
+        .stat-card:hover {
+            background: white;
+            border-color: #D1D5DB;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #3B82F6;
+            margin-bottom: 4px;
+        }
+        
+        .stat-label {
+            font-size: 13px;
+            color: #6B7280;
+            margin: 0;
+        }
+        
+        /* Recent Runs */
+        .recent-runs {
+            background: white;
+            border: 1px solid #E5E7EB;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #E5E7EB;
+        }
+        
+        .view-all-link {
+            color: #3B82F6;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        
+        .view-all-link:hover {
+            color: #2563EB;
+        }
+        
+        .runs-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .run-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: #F9FAFB;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        
+        .run-item:hover {
+            background: white;
+            border-color: #D1D5DB;
+        }
+        
+        .run-info {
+            flex: 1;
+        }
+        
+        .run-name {
+            font-weight: 600;
+            color: #111827;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        
+        .run-time {
+            font-size: 12px;
+            color: #6B7280;
+        }
+        
+        .run-status {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-success {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+        
+        .status-failed {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+        
+        .status-running {
+            background: #DBEAFE;
+            color: #1E40AF;
+        }
+        
+        /* Upcoming Schedules */
+        .upcoming-schedules {
+            background: white;
+            border: 1px solid #E5E7EB;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .schedule-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            background: #F9FAFB;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            transition: all 0.2s;
+        }
+        
+        .schedule-item:hover {
+            background: white;
+            border-color: #D1D5DB;
+        }
+        
+        .schedule-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .schedule-info {
+            flex: 1;
+        }
+        
+        .schedule-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: #111827;
+            margin-bottom: 2px;
+        }
+        
+        .schedule-time {
+            font-size: 12px;
+            color: #6B7280;
+        }
+        
+        .schedule-countdown {
+            background: #EFF6FF;
+            color: #3B82F6;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 32px 16px;
+            color: #9CA3AF;
+        }
+        
+        .empty-state svg {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 12px;
+            opacity: 0.6;
+        }
+        
+        /* Sky Background Container */
+        .sky-background {
+            position: relative;
+            width: 100vw;
+            margin-left: calc(-50vw + 50%);
+            padding: 20px 0 100px 0;
+            margin-bottom: 32px;
+            overflow: hidden;
+            background: linear-gradient(180deg, 
+                var(--sky-gradient-1) 0%, 
+                var(--sky-gradient-2) 50%, 
+                var(--sky-gradient-3) 100%);
+            transition: background 1s ease;
+            min-height: 320px;
+        }
+
+        /* Gradient fade at bottom */
+        .sky-background::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: linear-gradient(to bottom, 
+                transparent 0%, 
+                transparent 35%,
+                #F9FAFB 100%);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        /* Time-based sky colors - Professional blue gradients */
+        .sky-background.morning {
+            --sky-gradient-1: #5DADE2;  /* Light blue */
+            --sky-gradient-2: #85C1E9;  /* Sky blue */
+            --sky-gradient-3: #AED6F1;  /* Pale blue */
+        }
+
+        .sky-background.afternoon {
+            --sky-gradient-1: #2E86DE;  /* Bright blue */
+            --sky-gradient-2: #54A0FF;  /* Sky blue */
+            --sky-gradient-3: #74B9FF;  /* Light sky blue */
+        }
+
+        .sky-background.evening {
+            --sky-gradient-1: #5F6CAF;  /* Dusk blue */
+            --sky-gradient-2: #7B68EE;  /* Medium purple blue */
+            --sky-gradient-3: #FFA07A;  /* Light salmon for horizon */
+        }
+
+        .sky-background.night {
+            --sky-gradient-1: #0F2043;  /* Deep night blue */
+            --sky-gradient-2: #1A3A6E;  /* Dark blue */
+            --sky-gradient-3: #2C5AA8;  /* Midnight blue */
+        }
+
+        /* Sun */
+        .sun {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, #FDB813 0%, #FFCC33 50%, #FFE066 100%);
+            border-radius: 50%;
+            top: 30px;
+            right: 150px;
+            box-shadow: 
+                0 0 80px rgba(253, 184, 19, 0.5),
+                0 0 120px rgba(253, 184, 19, 0.3);
+            animation: floatSun 30s ease-in-out infinite;
+        }
+
+        @keyframes floatSun {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-15px) scale(1.05); }
+        }
+
+        /* Moon */
+        .moon {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle at 30% 30%, #ffffff 0%, #e6e6e6 100%);
+            border-radius: 50%;
+            top: 35px;
+            right: 160px;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.6);
+            animation: floatMoon 25s ease-in-out infinite;
+        }
+
+        .moon::before {
+            content: '';
+            position: absolute;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 50% 50%, transparent 60%, rgba(200, 200, 200, 0.1) 100%);
+            top: 2px;
+            left: 2px;
+        }
+
+        @keyframes floatMoon {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(10deg); }
+        }
+
+        /* Stars */
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s ease-in-out infinite;
+        }
+
+        .star:nth-child(1) { width: 2px; height: 2px; top: 20%; left: 10%; animation-delay: 0s; }
+        .star:nth-child(2) { width: 3px; height: 3px; top: 15%; left: 25%; animation-delay: 0.5s; }
+        .star:nth-child(3) { width: 2px; height: 2px; top: 30%; left: 40%; animation-delay: 1s; }
+        .star:nth-child(4) { width: 2px; height: 2px; top: 10%; left: 60%; animation-delay: 1.5s; }
+        .star:nth-child(5) { width: 3px; height: 3px; top: 25%; left: 75%; animation-delay: 2s; }
+        .star:nth-child(6) { width: 2px; height: 2px; top: 35%; left: 85%; animation-delay: 2.5s; }
+        .star:nth-child(7) { width: 2px; height: 2px; top: 5%; left: 50%; animation-delay: 0.3s; }
+        .star:nth-child(8) { width: 3px; height: 3px; top: 40%; left: 30%; animation-delay: 1.3s; }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* Clouds */
+        .cloud {
+            position: absolute;
+            background: linear-gradient(to bottom, #FFFFFF 0%, #F0F0F0 100%);
+            border-radius: 100px;
+            opacity: 0.8;
+            filter: blur(0.5px);
+        }
+
+        .cloud::before,
+        .cloud::after {
+            content: '';
+            position: absolute;
+            background: linear-gradient(to bottom, #FFFFFF 0%, #F5F5F5 100%);
+            border-radius: 100px;
+        }
+
+        .cloud1 {
+            width: 120px;
+            height: 50px;
+            top: 10%;
+            left: -150px;
+            animation: floatCloudPair1 35s linear infinite;
+        }
+
+        .cloud1::before {
+            width: 60px;
+            height: 60px;
+            top: -30px;
+            left: 15px;
+        }
+
+        .cloud1::after {
+            width: 70px;
+            height: 40px;
+            top: -15px;
+            right: 15px;
+        }
+
+        .cloud2 {
+            width: 100px;
+            height: 45px;
+            top: 20%;
+            right: -150px;
+            animation: floatCloudPair2 35s linear infinite;
+        }
+
+        .cloud2::before {
+            width: 50px;
+            height: 50px;
+            top: -25px;
+            left: 20px;
+        }
+
+        .cloud2::after {
+            width: 55px;
+            height: 35px;
+            top: -10px;
+            right: 20px;
+        }
+
+        /* Cloud animations - synchronized pairs */
+        @keyframes floatCloudPair1 {
+            0% { 
+                transform: translateX(0);
+                opacity: 0;
+            }
+            2% {
+                opacity: 0.8;
+            }
+            48% {
+                opacity: 0.8;
+            }
+            50% { 
+                transform: translateX(calc(100vw + 300px));
+                opacity: 0;
+            }
+            50.1% {
+                transform: translateX(0);
+                opacity: 0;
+            }
+            52% {
+                opacity: 0.8;
+            }
+            98% {
+                opacity: 0.8;
+            }
+            100% { 
+                transform: translateX(calc(100vw + 300px));
+                opacity: 0;
+            }
+        }
+
+        @keyframes floatCloudPair2 {
+            0% { 
+                transform: translateX(0);
+                opacity: 0;
+            }
+            2% {
+                opacity: 0.8;
+            }
+            48% {
+                opacity: 0.8;
+            }
+            50% { 
+                transform: translateX(calc(-100vw - 300px));
+                opacity: 0;
+            }
+            50.1% {
+                transform: translateX(0);
+                opacity: 0;
+            }
+            52% {
+                opacity: 0.8;
+            }
+            98% {
+                opacity: 0.8;
+            }
+            100% { 
+                transform: translateX(calc(-100vw - 300px));
+                opacity: 0;
+            }
+        }
+
+        /* Additional larger cloud for depth */
+        .cloud3 {
+            width: 140px;
+            height: 55px;
+            top: 50%;
+            left: -180px;
+            opacity: 0.5;
+            animation: floatCloudSlow 45s linear infinite;
+        }
+
+        .cloud3::before {
+            width: 70px;
+            height: 70px;
+            top: -35px;
+            left: 20px;
+        }
+
+        .cloud3::after {
+            width: 80px;
+            height: 45px;
+            top: -20px;
+            right: 15px;
+        }
+
+        @keyframes floatCloudSlow {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(calc(100vw + 400px)); }
+        }
+
+        /* Fourth cloud - pairs with cloud3 */
+        .cloud4 {
+            width: 110px;
+            height: 48px;
+            top: 65%;
+            right: -160px;
+            opacity: 0.6;
+            animation: floatCloudSlow2 45s linear infinite;
+            animation-delay: -22.5s;
+        }
+
+        .cloud4::before {
+            width: 55px;
+            height: 55px;
+            top: -28px;
+            left: 18px;
+        }
+
+        .cloud4::after {
+            width: 65px;
+            height: 38px;
+            top: -15px;
+            right: 18px;
+        }
+
+        @keyframes floatCloudSlow2 {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(calc(-100vw - 400px)); }
+        }
+
+        /* Welcome message card on top of sky */
+        .welcome-message {
+            position: relative;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            color: #1F2937;
+            border-radius: 20px;
+            padding: 48px 60px;
+            max-width: 1200px;
+            margin: 0 auto;
+            box-shadow: 
+                0 4px 6px rgba(0, 0, 0, 0.05), 
+                0 10px 20px rgba(0, 0, 0, 0.08),
+                0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            text-align: center;
+            z-index: 1;
+            min-height: 140px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .welcome-title {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .welcome-subtitle {
+            font-size: 18px;
+            color: #6B7280;
+            margin: 0;
+        }
+
+        /* Weather Widget */
+        .weather-widget {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            min-width: 140px;
+        }
+        .weather-location {
+            font-size: 12px;
+            color: #6B7280;
+            font-weight: 500;
+            text-align: right;
+        }
+        .weather-temp {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1F2937;
+            text-align: right;
+        }
+        .weather-time {
+            font-size: 14px;
+            color: #374151;
+            font-weight: 500;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="nav-left">
+                <div class="logo">
+                    <svg width="42" height="42" viewBox="0 0 42 42" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Infinity symbol with modern twist -->
+                        <path d="M11 21C11 17 7 13 7 21C7 29 11 25 15 21L27 21C31 17 35 13 35 21C35 29 31 25 27 21" fill="none" stroke="url(#viaGradient)" stroke-width="2.5" stroke-linecap="round"/>
+                        <!-- Center connection point -->
+                        <circle cx="21" cy="21" r="3" fill="url(#viaGradient)"/>
+                        <!-- Interactive nodes -->
+                        <circle cx="11" cy="21" r="2" fill="#3B82F6" opacity="0.8"/>
+                        <circle cx="31" cy="21" r="2" fill="#8B5CF6" opacity="0.8"/>
+                        <defs>
+                            <linearGradient id="viaGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#3B82F6;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#60A5FA;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#8B5CF6;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <span class="logo-text">VIA</span>
+                </div>
+                <div class="nav-tabs">
+                    <button class="nav-tab active">Home</button>
+                    <button class="nav-tab" onclick="window.location.href='index.html'">Visual Editor</button>
+                    <button class="nav-tab" onclick="window.location.href='test-runs.html'">Test Runs</button>
+                    <button class="nav-tab" onclick="window.location.href='templates.html'">Templates</button>
+                    <button class="nav-tab" onclick="window.location.href='scheduling.html'">Scheduling</button>
+                    <button class="nav-tab" onclick="window.location.href='scheduled-history.html'">Scheduled History</button>
+                    <button class="nav-tab" onclick="window.location.href='history.html'">History</button>
+                    <button class="nav-tab" onclick="window.location.href='analytics.html'">Analytics</button>
+                </div>
+            </div>
+            <div class="nav-right">
+                <!-- Profile button will be added here by auth.js -->
+            </div>
+        </nav>
+        
+        <!-- Main Content -->
+        <div class="home-page">
+            <!-- Sky Background with Welcome Message -->
+            <div class="sky-background" id="skyBackground">
+                <!-- Sun (shows during day) -->
+                <div class="sun" id="sun" style="display: none;"></div>
+                
+                <!-- Moon (shows at night) -->
+                <div class="moon" id="moon" style="display: none;"></div>
+                
+                <!-- Stars (shows at night) -->
+                <div class="stars" id="stars" style="display: none;">
+                    <div class="star"></div>
+                    <div class="star"></div>
+                    <div class="star"></div>
+                    <div class="star"></div>
+                    <div class="star"></div>
+                    <div class="star"></div>
+                    <div class="star"></div>
+                    <div class="star"></div>
+                </div>
+                
+                <!-- Clouds (shows during day) -->
+                <div class="cloud cloud1" id="cloud1" style="display: none;"></div>
+                <div class="cloud cloud2" id="cloud2" style="display: none;"></div>
+                <div class="cloud cloud3" id="cloud3" style="display: none;"></div>
+                <div class="cloud cloud4" id="cloud4" style="display: none;"></div>
+                
+                <!-- Welcome Message Card -->
+                <div class="welcome-message">
+                    <div class="weather-widget">
+                        <div class="weather-location" id="weather-location">--</div>
+                        <div class="weather-temp" id="weather-temp">--°</div>
+                        <div class="weather-time" id="weather-time">--:--</div>
+                    </div>
+                    <h1 class="welcome-title">Welcome to VIA</h1>
+                    <p class="welcome-subtitle">Visual Interaction Automation Platform</p>
+                </div>
+            </div>
+            
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">Dashboard</h1>
+                <p class="page-subtitle">Overview of your test automation activities</p>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <h2 class="section-title">Quick Actions</h2>
+                <div class="actions-grid">
+                    <a href="index.html" class="action-btn">
+                        <div class="action-icon">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                        </div>
+                        <div class="action-content">
+                            <div class="action-title">Record Now</div>
+                            <p class="action-desc">Start recording a new test</p>
+                        </div>
+                    </a>
+                    
+                    <a href="templates.html" class="action-btn">
+                        <div class="action-icon">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h8c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                            </svg>
+                        </div>
+                        <div class="action-content">
+                            <div class="action-title">New Script</div>
+                            <p class="action-desc">Create a new test script from template</p>
+                        </div>
+                    </a>
+                    
+                    <a href="test-runs.html" class="action-btn">
+                        <div class="action-icon">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M20 6h-2.18c.11-.31.18-.65.18-1a2.996 2.996 0 0 0-5.5-1.65l-.5.67-.5-.68C10.96 2.54 10 2 10 2 10 2 9.04 2.54 8.5 3.34l-.5.68-.5-.67C6.64 2.05 5.66 2 5 2s-3 1.34-3 3c0 .35.07.69.18 1H4c-1.11 0-2 .89-2 2v11c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zM7 19H5v-2h2v2zm0-4H5v-2h2v2zm0-4H5V9h2v2zm4 8H9v-2h2v2zm0-4H9v-2h2v2zm0-4H9V9h2v2zm4 8h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V9h2v2zm4 8h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V9h2v2z"/>
+                            </svg>
+                        </div>
+                        <div class="action-content">
+                            <div class="action-title">New Suite</div>
+                            <p class="action-desc">Create a test suite</p>
+                        </div>
+                    </a>
+                    
+                    <a href="scheduling.html" class="action-btn">
+                        <div class="action-icon">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                            </svg>
+                        </div>
+                        <div class="action-content">
+                            <div class="action-title">Schedule Suite</div>
+                            <p class="action-desc">Schedule automated runs</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
+                <!-- Main Content -->
+                <div class="main-content">
+                    <!-- Stats Section -->
+                    <div class="stats-section">
+                        <h2 class="section-title">Overview</h2>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-number" id="templates-count">0</div>
+                                <p class="stat-label">Templates</p>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="scripts-count">0</div>
+                                <p class="stat-label">Scripts</p>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="suites-count">0</div>
+                                <p class="stat-label">Suites</p>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="schedules-count">0</div>
+                                <p class="stat-label">Active Schedules</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Runs -->
+                    <div class="recent-runs">
+                        <div class="section-header">
+                            <h2 class="section-title" style="margin: 0;">Recent Runs</h2>
+                            <a href="history.html" class="view-all-link">View Full History</a>
+                        </div>
+                        <div class="runs-list" id="recent-runs-list">
+                            <!-- Dynamically populated -->
+                        </div>
+                        <div id="no-runs" class="empty-state" style="display: none;">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/>
+                            </svg>
+                            <p>No recent runs</p>
+                            <p style="font-size: 12px;">Run some tests to see activity here</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sidebar Content -->
+                <div class="sidebar-content">
+                    <!-- Upcoming Schedules -->
+                    <div class="upcoming-schedules">
+                        <div class="section-header">
+                            <h2 class="section-title" style="margin: 0;">Upcoming Schedules</h2>
+                            <a href="scheduling.html" class="view-all-link">View All</a>
+                        </div>
+                        <div id="upcoming-schedules-list">
+                            <!-- Dynamically populated -->
+                        </div>
+                        <div id="no-schedules" class="empty-state" style="display: none;">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                            </svg>
+                            <p>No scheduled runs</p>
+                            <p style="font-size: 12px;">Create schedules to see them here</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="auth.js"></script>
+    <script src="home.js"></script>
+</html>

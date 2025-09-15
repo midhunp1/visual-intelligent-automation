@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alert Settings - Visual Test Automation</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .alerts-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            padding-bottom: 100px;
+        }
+
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .alerts-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #E5E7EB;
+        }
+
+        .alerts-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .alerts-title h1 {
+            font-size: 28px;
+            color: #1F2937;
+            margin: 0;
+        }
+
+        .alert-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .alert-status.enabled {
+            background: #DEF7EC;
+            color: #03543F;
+        }
+
+        .alert-status.disabled {
+            background: #FDE8E8;
+            color: #9B1C1C;
+        }
+
+        .alert-status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .alert-status.enabled .alert-status-dot {
+            background: #10B981;
+        }
+
+        .alert-status.disabled .alert-status-dot {
+            background: #EF4444;
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .alerts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 1024px) {
+            .alerts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .alert-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 24px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #1F2937;
+        }
+
+        .card-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Email Configuration Card */
+        .config-section {
+            margin-bottom: 20px;
+        }
+
+        .config-label {
+            font-size: 14px;
+            color: #6B7280;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .config-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #D1D5DB;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .config-input:focus {
+            outline: none;
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .config-input[type="password"] {
+            font-family: monospace;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 48px;
+            height: 24px;
+            background: #D1D5DB;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: #10B981;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(24px);
+        }
+
+        /* Recipients Section */
+        .recipients-list {
+            margin-bottom: 16px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .recipient-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            background: #F9FAFB;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .recipient-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .recipient-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .recipient-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .recipient-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1F2937;
+        }
+
+        .recipient-email {
+            font-size: 12px;
+            color: #6B7280;
+        }
+
+        .recipient-role {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            background: #E0E7FF;
+            color: #3730A3;
+        }
+
+        .add-recipient-form {
+            display: flex;
+            gap: 8px;
+        }
+
+        .add-recipient-input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid #D1D5DB;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .btn-add-recipient {
+            padding: 10px 16px;
+            background: #3B82F6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .btn-add-recipient:hover {
+            background: #2563EB;
+        }
+
+        .btn-remove {
+            padding: 4px 8px;
+            background: #FEE2E2;
+            color: #DC2626;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-remove:hover {
+            background: #FCA5A5;
+        }
+
+        /* Alert Preferences */
+        .preference-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .preference-item:last-child {
+            border-bottom: none;
+        }
+
+        .preference-label {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .preference-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1F2937;
+            margin-bottom: 2px;
+        }
+
+        .preference-description {
+            font-size: 12px;
+            color: #6B7280;
+        }
+
+        /* Notification Channels */
+        .channels-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .channel-card {
+            padding: 16px;
+            border: 2px solid #E5E7EB;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .channel-card.active {
+            border-color: #3B82F6;
+            background: #EFF6FF;
+        }
+
+        .channel-card:hover {
+            border-color: #93C5FD;
+        }
+
+        .channel-check {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #3B82F6;
+            color: white;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .channel-card.active .channel-check {
+            display: flex;
+        }
+
+        .channel-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1F2937;
+            margin-bottom: 4px;
+        }
+
+        .channel-status {
+            font-size: 12px;
+            color: #6B7280;
+        }
+
+        /* Test Connection Section */
+        .test-section {
+            background: #F9FAFB;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 20px;
+        }
+
+        .test-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .btn-test {
+            padding: 8px 16px;
+            background: #8B5CF6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-test:hover {
+            background: #7C3AED;
+        }
+
+        .btn-save {
+            padding: 12px 24px;
+            background: #10B981;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .btn-save:hover {
+            background: #059669;
+        }
+
+        .alert-history {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 24px;
+        }
+
+        .history-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            background: #F9FAFB;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .history-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .history-icon.success {
+            background: #DEF7EC;
+            color: #10B981;
+        }
+
+        .history-icon.failed {
+            background: #FDE8E8;
+            color: #EF4444;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 16px 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateX(400px);
+            transition: transform 0.3s;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            border-left: 4px solid #10B981;
+        }
+
+        .toast.error {
+            border-left: 4px solid #EF4444;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+            <div class="nav-left">
+                <div class="logo">
+                    <svg width="42" height="42" viewBox="0 0 42 42" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Infinity symbol with modern twist -->
+                        <path d="M11 21C11 17 7 13 7 21C7 29 11 25 15 21L27 21C31 17 35 13 35 21C35 29 31 25 27 21" fill="none" stroke="url(#viaGradient)" stroke-width="2.5" stroke-linecap="round"/>
+                        
+                        <!-- Center dot for elegance -->
+                        <circle cx="21" cy="21" r="2" fill="url(#viaGradient)"/>
+                        
+                        <!-- Gradient definition -->
+                        <defs>
+                            <linearGradient id="viaGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#3B82F6;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#8B5CF6;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <span class="logo-text">VIA</span>
+                </div>
+                <div class="nav-tabs">
+                    <button class="nav-tab" onclick="window.location.href='home.html'">Home</button>
+                    <button class="nav-tab" onclick="window.location.href='index.html'">Visual Editor</button>
+                    <button class="nav-tab" onclick="window.location.href='test-runs.html'">Test Runs</button>
+                    <button class="nav-tab" onclick="window.location.href='templates.html'">Templates</button>
+                    <button class="nav-tab" onclick="window.location.href='scheduling.html'">Scheduling</button>
+                    <button class="nav-tab" onclick="window.location.href='scheduled-history.html'">Scheduled History</button>
+                    <button class="nav-tab" onclick="window.location.href='history.html'">History</button>
+                    <button class="nav-tab" onclick="window.location.href='analytics.html'">Analytics</button>
+                    <button class="nav-tab active">Alerts</button>
+                </div>
+            </div>
+            <div class="nav-right">
+                <button class="btn-icon">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="10" cy="10" r="8"/>
+                        <path d="M10 6v4l3 3"/>
+                    </svg>
+                </button>
+                <button class="btn-icon" onclick="window.location.href='profile.html'">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="10" cy="8" r="3"/>
+                        <path d="M4 20v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>
+                    </svg>
+                </button>
+            </div>
+        </nav>
+
+    <div class="alerts-container">
+        <div class="alerts-header">
+            <div class="alerts-title">
+                <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 17h.01M15 7v6m-3.95 7.364A9 9 0 1115 3a9 9 0 015.95 17.364L15 21l-5.95-.636z"/>
+                </svg>
+                <h1>Alert Settings</h1>
+            </div>
+            <div class="alert-status enabled" id="alert-status">
+                <div class="alert-status-dot"></div>
+                <span>Alerts Enabled</span>
+            </div>
+        </div>
+
+        <!-- Main Cards Grid -->
+        <div class="alerts-grid">
+            <!-- Recipients Management - Now Primary -->
+            <div class="alert-card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <div class="card-icon">👥</div>
+                        <span>Alert Recipients</span>
+                    </div>
+                    <div class="toggle-switch active" id="email-toggle">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+
+                <p style="font-size: 14px; color: #6B7280; margin-bottom: 20px;">
+                    Add email addresses to receive alerts when tests fail
+                </p>
+
+                <div class="recipients-list" id="recipients-list" style="max-height: 300px;">
+                    <!-- Recipients will be added here dynamically -->
+                </div>
+
+                <div class="add-recipient-form">
+                    <input type="email" class="add-recipient-input" id="new-recipient-email" placeholder="email@company.com">
+                    <button class="btn-add-recipient" onclick="alertManager.addRecipient()">Add Recipient</button>
+                </div>
+
+                <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #E5E7EB;">
+                    <span style="font-size: 12px; color: #6B7280;" id="recipient-count">0 recipients configured</span>
+                </div>
+            </div>
+
+            <!-- Alert History - Now Secondary -->
+            <div class="alert-card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <div class="card-icon">📜</div>
+                        <span>Recent Alert History</span>
+                    </div>
+                    <span style="font-size: 12px; color: #6B7280;">Last 24 hours</span>
+                </div>
+
+                <div id="alert-history-list" style="max-height: 350px; overflow-y: auto;">
+                    <div style="text-align: center; padding: 60px 20px; color: #6B7280;">
+                        <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" style="margin: 0 auto 12px; opacity: 0.3;">
+                            <path d="M9 12h6m-6 4h6m2-8l3 3m0 0l3-3m-3 3v10m5-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <p style="font-size: 14px; font-weight: 500;">No alerts sent yet</p>
+                        <p style="font-size: 12px; margin-top: 4px;">Alerts will appear here when tests fail</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Advanced Configuration - Collapsible -->
+        <div class="alert-card" style="margin-top: 24px;">
+            <div class="card-header" style="cursor: pointer;" onclick="alertManager.toggleAdvanced()">
+                <div class="card-title">
+                    <div class="card-icon">
+                        <svg id="advanced-arrow" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" style="transition: transform 0.3s;">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+                    <span>Advanced Email Configuration</span>
+                </div>
+                <span style="font-size: 12px; color: #6B7280;">SMTP Settings & Authentication</span>
+            </div>
+
+            <div id="advanced-config" style="display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid #E5E7EB;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div>
+                        <div class="config-section">
+                            <label class="config-label">SMTP Server</label>
+                            <input type="text" class="config-input" id="smtp-server" value="smtp.zoho.com" placeholder="smtp.zoho.com">
+                            <span style="font-size: 11px; color: #6B7280; margin-top: 4px; display: block;">
+                                US: smtp.zoho.com | EU: smtp.zoho.eu | IN: smtp.zoho.in
+                            </span>
+                        </div>
+
+                        <div class="config-section">
+                            <label class="config-label">Port</label>
+                            <input type="text" class="config-input" id="smtp-port" value="465" placeholder="465">
+                            <span style="font-size: 11px; color: #6B7280; margin-top: 4px; display: block;">
+                                Use 465 for SSL or 587 for TLS
+                            </span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="config-section">
+                            <label class="config-label">Sender Email</label>
+                            <input type="email" class="config-input" id="sender-email" placeholder="alerts@company.com">
+                            <span style="font-size: 11px; color: #6B7280; margin-top: 4px; display: block;">
+                                Your Zoho email address
+                            </span>
+                        </div>
+
+                        <div class="config-section">
+                            <label class="config-label">App Password</label>
+                            <input type="password" class="config-input" id="app-password" placeholder="••••••••••••">
+                            <span style="font-size: 11px; color: #6B7280; margin-top: 4px; display: block;">
+                                Generate from Zoho Settings → Security → App Passwords
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="test-section" style="margin-top: 20px;">
+                    <div class="test-header">
+                        <span style="font-size: 14px; color: #6B7280;">Connection Status</span>
+                        <button class="btn-test" onclick="alertManager.testConnection()">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M13 2L2 7l4 2m0 0l3 3m-3-3v6m6-11v5m0 3.5v.5"/>
+                            </svg>
+                            Test Connection
+                        </button>
+                    </div>
+                    <div id="connection-status" style="font-size: 12px; color: #6B7280; margin-top: 8px;">
+                        Not tested yet
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alert Preferences -->
+        <div class="alert-card">
+            <div class="card-header">
+                <div class="card-title">
+                    <div class="card-icon">⚙️</div>
+                    <span>Alert Preferences</span>
+                </div>
+            </div>
+
+            <div class="preference-item">
+                <div class="preference-label">
+                    <span class="preference-title">Alert on Test Failures</span>
+                    <span class="preference-description">Send alerts when individual tests fail</span>
+                </div>
+                <div class="toggle-switch active" id="alert-test-failures">
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
+
+            <div class="preference-item">
+                <div class="preference-label">
+                    <span class="preference-title">Alert on Suite Failures</span>
+                    <span class="preference-description">Send alerts when test suites fail</span>
+                </div>
+                <div class="toggle-switch active" id="alert-suite-failures">
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
+
+            <div class="preference-item">
+                <div class="preference-label">
+                    <span class="preference-title">Include Error Details</span>
+                    <span class="preference-description">Include detailed error information in alerts</span>
+                </div>
+                <div class="toggle-switch active" id="include-error-details">
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
+
+            <div class="preference-item">
+                <div class="preference-label">
+                    <span class="preference-title">Include Suggestions</span>
+                    <span class="preference-description">Include fix suggestions in alert emails</span>
+                </div>
+                <div class="toggle-switch active" id="include-suggestions">
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
+
+            <div class="preference-item">
+                <div class="preference-label">
+                    <span class="preference-title">Batch Alerts</span>
+                    <span class="preference-description">Group multiple failures within 5 minutes into one email</span>
+                </div>
+                <div class="toggle-switch" id="batch-alerts">
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
+
+            <div class="preference-item">
+                <div class="preference-label">
+                    <span class="preference-title">Daily Summary</span>
+                    <span class="preference-description">Send daily summary of all test results at 9 AM</span>
+                </div>
+                <div class="toggle-switch" id="daily-summary">
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notification Channels -->
+        <div class="alert-card" style="margin-top: 24px;">
+            <div class="card-header">
+                <div class="card-title">
+                    <div class="card-icon">📢</div>
+                    <span>Notification Channels</span>
+                </div>
+            </div>
+
+            <div class="channels-grid">
+                <div class="channel-card active" data-channel="email">
+                    <div class="channel-check">✓</div>
+                    <div class="channel-name">📧 Email</div>
+                    <div class="channel-status">Configured</div>
+                </div>
+                <div class="channel-card" data-channel="slack">
+                    <div class="channel-check">✓</div>
+                    <div class="channel-name">💬 Slack</div>
+                    <div class="channel-status">Coming Soon</div>
+                </div>
+                <div class="channel-card" data-channel="teams">
+                    <div class="channel-check">✓</div>
+                    <div class="channel-name">👥 MS Teams</div>
+                    <div class="channel-status">Coming Soon</div>
+                </div>
+                <div class="channel-card" data-channel="webhook">
+                    <div class="channel-check">✓</div>
+                    <div class="channel-name">🔗 Webhook</div>
+                    <div class="channel-status">Coming Soon</div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Save Button -->
+        <div style="text-align: center; margin-top: 32px;">
+            <button class="btn-save" onclick="alertManager.saveSettings()">
+                Save Alert Settings
+            </button>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span id="toast-message">Settings saved successfully!</span>
+    </div>
+
+    <script src="alerts.js"></script>
+</body>
+</html>

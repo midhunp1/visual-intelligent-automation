@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Runs - Visual Test Automation Platform</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .test-runs-page {
+            padding: 24px 24px 24px 48px;
+            max-width: 100%;
+            margin: 0;
+        }
+
+        .test-runs-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--gray-200);
+            max-width: 1400px;
+        }
+
+        .test-runs-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .test-runs-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            max-width: 1400px;
+        }
+
+        .section {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            padding: 24px;
+            min-height: 500px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--gray-100);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+
+        .script-list, .suite-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .script-item, .suite-item {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-radius: 6px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s;
+        }
+
+        .script-item:hover, .suite-item:hover {
+            background: white;
+            border-color: var(--blue-300);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .script-item.selected {
+            background: var(--blue-50);
+            border-color: var(--blue-400);
+        }
+
+        .script-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .script-checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .script-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--gray-800);
+        }
+
+        .script-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 4px;
+            border: 1px solid #D1D5DB; /* Direct gray color */
+            background: white;
+            color: #374151; /* Gray text */
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-small:hover {
+            background: #F9FAFB; /* Light gray background */
+            border-color: #9CA3AF; /* Darker gray border */
+        }
+
+        .btn-run {
+            background: #10B981; /* Green color */
+            color: white;
+            border: none;
+        }
+
+        .btn-run:hover {
+            background: #059669; /* Darker green */
+        }
+
+        .create-suite-section {
+            display: block !important; /* Always visible */
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #E5E7EB; /* Direct gray color */
+        }
+
+        .create-suite-button {
+            width: 100%;
+            padding: 12px;
+            background: #3B82F6; /* Direct blue color instead of var */
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .create-suite-button:hover:not(:disabled) {
+            background: #2563EB; /* Darker blue on hover */
+        }
+
+        .create-suite-button:disabled {
+            background: var(--gray-300);
+            cursor: not-allowed;
+        }
+
+        .suite-item {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .suite-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .suite-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .suite-scripts {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding-left: 20px;
+        }
+
+        .suite-script-item {
+            font-size: 13px;
+            color: var(--gray-600);
+            padding: 4px 0;
+        }
+
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            color: var(--gray-500);
+        }
+
+        .empty-state svg {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            width: 400px;
+            max-width: 90%;
+        }
+
+        .modal-header {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .modal-body {
+            margin-bottom: 20px;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--gray-300);
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .btn-cancel {
+            padding: 8px 16px;
+            background: white;
+            border: 1px solid #D1D5DB; /* Direct gray */
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-confirm {
+            padding: 8px 16px;
+            background: #3B82F6; /* Direct blue */
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-confirm:hover {
+            background: #2563EB; /* Darker blue */
+        }
+
+        @media (max-width: 968px) {
+            .test-runs-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Top Navigation Bar -->
+        <nav class="navbar">
+            <div class="nav-left">
+                <div class="logo">
+                    <svg width="42" height="42" viewBox="0 0 42 42" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Infinity symbol with modern twist -->
+                        <path d="M11 21C11 17 7 13 7 21C7 29 11 25 15 21L27 21C31 17 35 13 35 21C35 29 31 25 27 21" fill="none" stroke="url(#viaGradient)" stroke-width="2.5" stroke-linecap="round"/>
+                        <!-- Center connection point -->
+                        <circle cx="21" cy="21" r="3" fill="url(#viaGradient)"/>
+                        <!-- Interactive nodes -->
+                        <circle cx="11" cy="21" r="2" fill="#3B82F6" opacity="0.8"/>
+                        <circle cx="31" cy="21" r="2" fill="#8B5CF6" opacity="0.8"/>
+                        <defs>
+                            <linearGradient id="viaGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#3B82F6;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#60A5FA;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#8B5CF6;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                    </svg>                    <span class="logo-text">VIA</span>
+                </div>
+                <div class="nav-tabs">
+                    <button class="nav-tab" onclick="window.location.href='home.html'">Home</button>
+                    <button class="nav-tab" onclick="window.location.href='index.html'">Visual Editor</button>
+                    <button class="nav-tab active">Test Runs</button>
+                    <button class="nav-tab" onclick="window.location.href='templates.html'">Templates</button>
+                    <button class="nav-tab" onclick="window.location.href='scheduling.html'">Scheduling</button>
+                    <button class="nav-tab" onclick="window.location.href='scheduled-history.html'">Scheduled History</button>
+                    <button class="nav-tab" onclick="window.location.href='history.html'">History</button>
+                    <button class="nav-tab" onclick="window.location.href='analytics.html'">Analytics</button>
+                </div>
+            </div>
+            <div class="nav-right">
+                <button class="btn-icon">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="10" cy="10" r="8"/>
+                        <path d="M10 6v4l3 3"/>
+                    </svg>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Test Runs Page Content -->
+        <div class="test-runs-page">
+        <div class="test-runs-header">
+            <h1 class="test-runs-title">Test Runs Management</h1>
+        </div>
+
+        <div class="test-runs-container">
+            <!-- Scripts Section -->
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">Scripts</h2>
+                    <span id="script-count" class="count-badge">0 scripts</span>
+                </div>
+                
+                <div id="scripts-list" class="script-list">
+                    <!-- Scripts will be dynamically added here -->
+                </div>
+
+                <div id="empty-scripts" class="empty-state">
+                    <svg fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"/>
+                    </svg>
+                    <p>No scripts added yet</p>
+                    <p style="font-size: 12px;">Add scripts from the Templates page</p>
+                </div>
+
+                <div class="create-suite-section">
+                    <button id="create-suite-btn" class="create-suite-button">
+                        <svg width="16" height="16" fill="currentColor">
+                            <path d="M12 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9v2H7v-2H5V9h2V7h2v2h2v2z"/>
+                        </svg>
+                        Create Suite from Selected
+                    </button>
+                </div>
+            </div>
+
+            <!-- Suites Section -->
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">Suites</h2>
+                    <span id="suite-count" class="count-badge">0 suites</span>
+                </div>
+                
+                <div id="suites-list" class="suite-list">
+                    <!-- Suites will be dynamically added here -->
+                </div>
+
+                <div id="empty-suites" class="empty-state">
+                    <svg fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                    </svg>
+                    <p>No test suites created</p>
+                    <p style="font-size: 12px;">Select scripts and create a suite</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Suite Modal -->
+    <div id="suite-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Create Test Suite</div>
+            <div class="modal-body">
+                <input type="text" id="suite-name-input" class="modal-input" placeholder="Enter suite name..." />
+                <p style="margin-top: 12px; font-size: 13px; color: var(--gray-600);">
+                    <span id="selected-count">0</span> scripts selected
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeSuiteModal()">Cancel</button>
+                <button class="btn-confirm" onclick="createSuite()">Create Suite</button>
+            </div>
+        </div>
+    </div>
+
+    </div> <!-- End of app-container -->
+    
+    <script src="auth.js"></script>
+    <script src="test-runs.js"></script>
+</html>

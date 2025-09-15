@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visual Test Automation Platform - Production</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Manual Recording Panel */
+        .manual-recording-panel {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        .manual-recording-panel.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .manual-recording-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .recording-indicator {
+            width: 12px;
+            height: 12px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .manual-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .manual-action-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .manual-action-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .manual-action-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .quick-input {
+            margin-top: 16px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .quick-input input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .quick-input input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .quick-input button {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.3);
+            border: none;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .recording-stats {
+            margin-top: 16px;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        /* Step Tiles Enhancement */
+        .step-tile {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .step-tile:hover {
+            border-color: #6366f1;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+        }
+
+        .step-tile.playing {
+            background: #fef3c7;
+            border-color: #f59e0b;
+        }
+
+        .step-tile.error {
+            background: #fee2e2;
+            border-color: #ef4444;
+        }
+
+        .step-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-type {
+            font-size: 12px;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .step-details {
+            font-size: 14px;
+            color: #111827;
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        .step-source {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: #e5e7eb;
+            color: #6b7280;
+        }
+
+        .step-source.automation {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .step-source.manual {
+            background: #fce7f3;
+            color: #be185d;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Top Navigation Bar -->
+        <nav class="navbar">
+            <div class="nav-left">
+                <div class="logo">
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                        <rect width="32" height="32" rx="8" fill="url(#gradient1)"/>
+                        <path d="M10 16L14 20L22 12" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                        <defs>
+                            <linearGradient id="gradient1" x1="0" y1="0" x2="32" y2="32">
+                                <stop stop-color="#6366F1"/>
+                                <stop offset="1" stop-color="#8B5CF6"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <span class="logo-text">TestFlow Pro</span>
+                </div>
+                <div class="nav-tabs">
+                    <button class="nav-tab active">Visual Editor</button>
+                    <button class="nav-tab">Test Runs</button>
+                    <button class="nav-tab">Analytics</button>
+                </div>
+            </div>
+            <div class="nav-right">
+                <input type="url" id="target-url" placeholder="https://example.com" style="
+                    padding: 8px 12px;
+                    border: 1px solid var(--gray-300);
+                    border-radius: 6px 0 0 6px;
+                    width: 300px;
+                    font-size: 14px;
+                ">
+                <button class="btn-primary" id="load-website" style="
+                    border-radius: 0 6px 6px 0;
+                    border-left: none;
+                ">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2L2 8l6 2 2 6z"/>
+                    </svg>
+                    Load Website
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">Recording Controls</h3>
+                    <div class="recording-controls">
+                        <button id="start-recording" class="record-btn record-start" disabled>
+                            <svg width="16" height="16" fill="currentColor">
+                                <circle cx="8" cy="8" r="6"/>
+                            </svg>
+                            Start Recording
+                        </button>
+                        <button id="stop-recording" class="record-btn record-stop" disabled>
+                            <svg width="16" height="16" fill="currentColor">
+                                <rect x="3" y="3" width="10" height="10"/>
+                            </svg>
+                            Stop Recording  
+                        </button>
+                        <button id="play-test" class="record-btn record-play" disabled>
+                            <svg width="16" height="16" fill="currentColor">
+                                <path d="M5 3l8 5-8 5V3z"/>
+                            </svg>
+                            Play Test
+                        </button>
+                        <button id="export-test" class="record-btn" disabled>
+                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M8 12V2M4 8l4 4 4-4M2 16h12"/>
+                            </svg>
+                            Export Script
+                        </button>
+                        <div class="recording-status">
+                            <span id="recording-status">Load a website to start</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Manual Recording Panel (VNC Actions) -->
+                <div id="manual-recording-panel" class="manual-recording-panel">
+                    <div class="manual-recording-header">
+                        <div class="recording-indicator"></div>
+                        <h3>Manual Action Recording</h3>
+                    </div>
+                    <p style="font-size: 12px; opacity: 0.9; margin-bottom: 12px;">
+                        Use these buttons to manually record VNC interactions
+                    </p>
+                    <div class="manual-actions">
+                        <button class="manual-action-btn" data-action="click">
+                            <svg fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M6.672 1.911a1 1 0 10-1.932.518l.259.966a1 1 0 001.932-.518l-.26-.966zM2.429 4.74a1 1 0 10-.517 1.932l.966.259a1 1 0 00.517-1.932l-.966-.26zm8.814-.569a1 1 0 00-1.415-1.414l-.707.707a1 1 0 101.415 1.414l.707-.707zm-7.071 1.414a1 1 0 10-1.414 1.414l.707.707a1 1 0 001.414-1.414l-.707-.707zm3.2 5.171a1 1 0 00-1.3 1.3l4 10a1 1 0 001.823.075l1.38-2.759 3.018 3.02a1 1 0 001.414-1.415l-3.019-3.02 2.76-1.379a1 1 0 00-.076-1.822l-10-4z"/>
+                            </svg>
+                            Record Click
+                        </button>
+                        <button class="manual-action-btn" data-action="fill">
+                            <svg fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M2 5a2 2 0 012-2h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V5zm3.293 1.293a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 01-1.414-1.414L7.586 10 5.293 7.707a1 1 0 010-1.414zM11 12a1 1 0 100 2h3a1 1 0 100-2h-3z"/>
+                            </svg>
+                            Record Fill
+                        </button>
+                        <button class="manual-action-btn" data-action="type">
+                            <svg fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1z"/>
+                            </svg>
+                            Record Type
+                        </button>
+                        <button class="manual-action-btn" data-action="navigate">
+                            <svg fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM4.332 8.027a6.012 6.012 0 011.912-2.706C6.512 5.73 6.974 6 7.5 6A1.5 1.5 0 019 7.5V8a2 2 0 004 0 2 2 0 011.523-1.943A5.977 5.977 0 0116 10c0 .34-.028.675-.083 1H15a2 2 0 00-2 2v2.197A5.973 5.973 0 0110 16v-2a2 2 0 00-2-2 2 2 0 01-2-2 2 2 0 00-1.668-1.973z"/>
+                            </svg>
+                            Navigate URL
+                        </button>
+                    </div>
+                    <div class="quick-input">
+                        <input type="text" id="manual-selector" placeholder="CSS Selector (e.g., button.submit)">
+                        <input type="text" id="manual-value" placeholder="Value/Text">
+                        <button id="add-manual-step">Add</button>
+                    </div>
+                    <div class="recording-stats">
+                        <div class="stat-item">
+                            <span class="stat-value" id="stat-auto">0</span>
+                            <span class="stat-label">Auto</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="stat-manual">0</span>
+                            <span class="stat-label">Manual</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="stat-total">0</span>
+                            <span class="stat-label">Total</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">Test Steps</h3>
+                    <div id="steps-list" class="steps-list" style="max-height: 400px; overflow-y: auto;">
+                        <!-- Dynamic step tiles will be added here -->
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Canvas Area -->
+            <div class="canvas-container">
+                <div class="canvas-toolbar">
+                    <div class="toolbar-left">
+                        <button class="btn-icon" id="zoom-in">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="8" cy="8" r="6"/>
+                                <path d="M14 14l4 4M8 5v6M5 8h6"/>
+                            </svg>
+                        </button>
+                        <button class="btn-icon" id="zoom-out">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="8" cy="8" r="6"/>
+                                <path d="M14 14l4 4M5 8h6"/>
+                            </svg>
+                        </button>
+                        <span class="zoom-level">100%</span>
+                    </div>
+                    <div class="toolbar-right">
+                        <button class="btn-primary" id="open-vnc">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="3" width="12" height="9" rx="2"/>
+                                <line x1="8" y1="17" x2="8" y2="12"/>
+                                <line x1="6" y1="17" x2="10" y2="17"/>
+                            </svg>
+                            Open VNC Viewer
+                        </button>
+                        <button class="btn-icon" id="clear-steps">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M6 2l2 2m0 0l2 2m-2-2l2-2m-2 2L6 6m8 8l2 2m0 0l2 2m-2-2l2-2m-2 2l-2-2"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="canvas-wrapper">
+                    <canvas id="flow-canvas"></canvas>
+                    <div id="tiles-container" class="tiles-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Socket.IO for real-time communication -->
+    <script src="/socket.io/socket.io.js"></script>
+    
+    <script>
+        // Production-ready JavaScript with manual recording support
+        const socket = io();
+        let sessionId = null;
+        let isRecording = false;
+        let recordedSteps = [];
+
+        // Initialize UI
+        document.addEventListener('DOMContentLoaded', () => {
+            const loadBtn = document.getElementById('load-website');
+            const startBtn = document.getElementById('start-recording');
+            const stopBtn = document.getElementById('stop-recording');
+            const playBtn = document.getElementById('play-test');
+            const exportBtn = document.getElementById('export-test');
+            const statusEl = document.getElementById('recording-status');
+            const manualPanel = document.getElementById('manual-recording-panel');
+            const stepsList = document.getElementById('steps-list');
+
+            // Load website
+            loadBtn.addEventListener('click', async () => {
+                const url = document.getElementById('target-url').value;
+                if (!url) {
+                    alert('Please enter a URL');
+                    return;
+                }
+
+                sessionId = 'session-' + Date.now();
+                statusEl.textContent = 'Loading website...';
+
+                try {
+                    const response = await fetch('/api/start-session', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ url, sessionId })
+                    });
+
+                    const data = await response.json();
+                    if (data.success) {
+                        statusEl.textContent = 'Website loaded. Ready to record.';
+                        startBtn.disabled = false;
+                        
+                        // Enable VNC button
+                        document.getElementById('open-vnc').onclick = () => {
+                            window.open('http://localhost:6086/vnc.html', '_blank');
+                        };
+                    }
+                } catch (error) {
+                    statusEl.textContent = 'Error loading website';
+                    console.error(error);
+                }
+            });
+
+            // Start recording
+            startBtn.addEventListener('click', async () => {
+                if (!sessionId) return;
+
+                try {
+                    const response = await fetch('/api/start-recording', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ sessionId })
+                    });
+
+                    const data = await response.json();
+                    if (data.success) {
+                        isRecording = true;
+                        recordedSteps = [];
+                        stepsList.innerHTML = '';
+                        
+                        statusEl.textContent = 'Recording... Interact with the browser';
+                        startBtn.disabled = true;
+                        stopBtn.disabled = false;
+                        
+                        // Show manual recording panel
+                        manualPanel.classList.add('active');
+                        
+                        // Update stats
+                        updateStats(0, 0, 0);
+                    }
+                } catch (error) {
+                    console.error(error);
+                }
+            });
+
+            // Stop recording
+            stopBtn.addEventListener('click', async () => {
+                if (!sessionId) return;
+
+                try {
+                    const response = await fetch('/api/stop-recording', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ sessionId })
+                    });
+
+                    const data = await response.json();
+                    if (data.success) {
+                        isRecording = false;
+                        recordedSteps = data.steps;
+                        
+                        statusEl.textContent = `Recording stopped. ${data.stats.total} steps captured.`;
+                        stopBtn.disabled = true;
+                        playBtn.disabled = false;
+                        exportBtn.disabled = false;
+                        
+                        // Hide manual recording panel
+                        manualPanel.classList.remove('active');
+                        
+                        // Update stats
+                        updateStats(data.stats.automated, data.stats.manual, data.stats.total);
+                        
+                        // Display generated script
+                        if (data.script) {
+                            console.log('Generated Playwright Script:', data.script);
+                        }
+                    }
+                } catch (error) {
+                    console.error(error);
+                }
+            });
+
+            // Play test
+            playBtn.addEventListener('click', async () => {
+                if (!sessionId || recordedSteps.length === 0) return;
+
+                try {
+                    statusEl.textContent = 'Playing test...';
+                    playBtn.disabled = true;
+
+                    const response = await fetch('/api/play-recording', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ sessionId })
+                    });
+
+                    const data = await response.json();
+                    if (data.success) {
+                        statusEl.textContent = 'Test playback completed';
+                        playBtn.disabled = false;
+                    }
+                } catch (error) {
+                    console.error(error);
+                    playBtn.disabled = false;
+                }
+            });
+
+            // Export test
+            exportBtn.addEventListener('click', () => {
+                if (!sessionId) return;
+                window.location.href = `/api/export-test/${sessionId}`;
+            });
+
+            // Manual action buttons
+            document.querySelectorAll('.manual-action-btn').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    if (!isRecording) return;
+
+                    const action = btn.dataset.action;
+                    const selector = document.getElementById('manual-selector').value;
+                    const value = document.getElementById('manual-value').value;
+
+                    let actionData = { type: action };
+
+                    switch (action) {
+                        case 'click':
+                            actionData.selector = selector || prompt('Enter CSS selector for click:');
+                            break;
+                        case 'fill':
+                            actionData.selector = selector || prompt('Enter CSS selector:');
+                            actionData.value = value || prompt('Enter value to fill:');
+                            break;
+                        case 'type':
+                            actionData.selector = selector || prompt('Enter CSS selector:');
+                            actionData.text = value || prompt('Enter text to type:');
+                            break;
+                        case 'navigate':
+                            actionData.url = prompt('Enter URL to navigate to:');
+                            break;
+                    }
+
+                    if (actionData.selector || actionData.url) {
+                        // Send manual action
+                        const response = await fetch('/api/record-action', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ sessionId, ...actionData })
+                        });
+
+                        const data = await response.json();
+                        if (data.success) {
+                            // Clear inputs
+                            document.getElementById('manual-selector').value = '';
+                            document.getElementById('manual-value').value = '';
+                        }
+                    }
+                });
+            });
+
+            // Quick add manual step
+            document.getElementById('add-manual-step').addEventListener('click', async () => {
+                const selector = document.getElementById('manual-selector').value;
+                const value = document.getElementById('manual-value').value;
+
+                if (!selector) return;
+
+                const actionData = {
+                    type: value ? 'fill' : 'click',
+                    selector,
+                    value
+                };
+
+                const response = await fetch('/api/record-action', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sessionId, ...actionData })
+                });
+
+                if (response.ok) {
+                    document.getElementById('manual-selector').value = '';
+                    document.getElementById('manual-value').value = '';
+                }
+            });
+        });
+
+        // Socket.IO event handlers
+        socket.on('step-recorded', (data) => {
+            if (data.sessionId !== sessionId) return;
+
+            // Add step tile
+            addStepTile(data.step, data.totalSteps);
+
+            // Update stats
+            fetchAndUpdateStats();
+        });
+
+        socket.on('step-playing', (data) => {
+            if (data.sessionId !== sessionId) return;
+
+            // Highlight playing step
+            document.querySelectorAll('.step-tile').forEach((tile, index) => {
+                tile.classList.toggle('playing', index === data.stepIndex);
+            });
+
+            // Update progress
+            const statusEl = document.getElementById('recording-status');
+            statusEl.textContent = `Playing step ${data.stepIndex + 1}... (${Math.round(data.progress)}%)`;
+        });
+
+        socket.on('playback-complete', (data) => {
+            if (data.sessionId !== sessionId) return;
+
+            document.querySelectorAll('.step-tile').forEach(tile => {
+                tile.classList.remove('playing');
+            });
+
+            document.getElementById('recording-status').textContent = 'Playback completed';
+        });
+
+        // Helper functions
+        function addStepTile(step, stepNumber) {
+            const stepsList = document.getElementById('steps-list');
+            
+            const tile = document.createElement('div');
+            tile.className = 'step-tile';
+            
+            const icon = getStepIcon(step.type);
+            const details = getStepDetails(step);
+            
+            tile.innerHTML = `
+                <div class="step-icon">${icon}</div>
+                <div class="step-content">
+                    <div class="step-type">Step ${stepNumber}: ${step.type}</div>
+                    <div class="step-details">${details}</div>
+                </div>
+                <span class="step-source ${step.source}">${step.source || 'unknown'}</span>
+            `;
+            
+            stepsList.appendChild(tile);
+            stepsList.scrollTop = stepsList.scrollHeight;
+        }
+
+        function getStepIcon(type) {
+            const icons = {
+                click: '👆',
+                fill: '✏️',
+                type: '⌨️',
+                navigate: '🌐',
+                select: '📝',
+                check: '☑️',
+                uncheck: '☐',
+                press: '⏎'
+            };
+            return icons[type] || '📌';
+        }
+
+        function getStepDetails(step) {
+            switch (step.type) {
+                case 'click':
+                    return step.selector || `Position (${step.coordinates?.x}, ${step.coordinates?.y})`;
+                case 'fill':
+                    return `${step.selector} = "${step.value}"`;
+                case 'type':
+                    return `${step.selector}: "${step.text}"`;
+                case 'navigate':
+                    return step.url;
+                case 'select':
+                    return `${step.selector} → ${step.value}`;
+                default:
+                    return step.selector || '';
+            }
+        }
+
+        function updateStats(auto, manual, total) {
+            document.getElementById('stat-auto').textContent = auto;
+            document.getElementById('stat-manual').textContent = manual;
+            document.getElementById('stat-total').textContent = total;
+        }
+
+        async function fetchAndUpdateStats() {
+            if (!sessionId) return;
+
+            try {
+                const response = await fetch(`/api/recording-status/${sessionId}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    updateStats(data.steps.automated, data.steps.manual, data.steps.total);
+                }
+            } catch (error) {
+                console.error('Error fetching stats:', error);
+            }
+        }
+    </script>
+</body>
+</html>
