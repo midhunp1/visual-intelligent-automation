@@ -17,9 +17,14 @@ const io = socketIo(server, {
 
 const PORT = process.env.PORT || 8288;
 
-// Serve static files
-app.use(express.static(path.join(__dirname, 'public')));
+// Middleware
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Root route - redirect to login
+app.get('/', (req, res) => {
+    res.redirect('/login.html');
+});
 
 // In-memory storage for API-only mode
 const scripts = new Map();
