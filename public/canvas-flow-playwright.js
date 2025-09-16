@@ -159,7 +159,15 @@ class FlowCanvas {
         
         // Open VNC Viewer
         document.getElementById('open-vnc')?.addEventListener('click', () => {
-            window.open('http://localhost:6086/vnc.html', '_blank');
+            // Use configuration to determine VNC URL
+            if (window.VIAConfig && window.VIAConfig.shouldOpenVNCInBrowser()) {
+                // For live site, open Cloudflare tunnel URL in browser
+                const tunnelUrl = window.VIAConfig.getVNCUrl();
+                window.open(tunnelUrl, '_blank');
+            } else {
+                // For local, open local noVNC
+                window.open('http://localhost:6086/vnc.html', '_blank');
+            }
         });
         
         // Canvas click for deselect, delete buttons, and tile selection

@@ -58,6 +58,23 @@ const Config = {
         } else {
             return this.getApiUrl();
         }
+    },
+    
+    // VNC Configuration
+    getVNCUrl: function() {
+        // If running locally, use local VNC
+        if (this.isLocal) {
+            return 'vnc://localhost:5901';
+        }
+        // If live, use Cloudflare tunnel URL (this is your tunnel for port 6086)
+        // The tunnel is exposing the noVNC web interface
+        return 'https://considerations-curtis-operational-johnston.trycloudflare.com';
+    },
+    
+    // Check if should open VNC in browser
+    shouldOpenVNCInBrowser: function() {
+        // On live site, always open in browser (using noVNC web client)
+        return !this.isLocal;
     }
 };
 
