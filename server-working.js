@@ -88,6 +88,16 @@ app.post('/api/auth/login', (req, res) => {
     });
 });
 
+// Health check endpoint for keep-alive
+app.get('/api/health', (req, res) => {
+    res.json({ 
+        status: 'healthy', 
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime(),
+        service: 'VIA Platform API'
+    });
+});
+
 app.get('/api/auth/verify', (req, res) => {
     res.json({ success: true, user: users.admin });
 });
