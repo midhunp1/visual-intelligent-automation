@@ -19,7 +19,7 @@ const io = socketIo(server, {
     }
 });
 
-const PORT = 8288;
+const PORT = process.env.PORT || 8288;
 
 // Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
