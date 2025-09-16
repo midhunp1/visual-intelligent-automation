@@ -4,12 +4,20 @@ services:
     runtime: node
     repo: https://github.com/midhunp1/visual-intelligent-automation
     buildCommand: npm install && npx playwright install-deps && npx playwright install chromium
-    startCommand: node server-working.js
+    startCommand: xvfb-run -a --server-args="-screen 0 1280x720x24" node server-working.js
     envVars:
       - key: PORT
-        value: 8288
+        value: 10000
       - key: NODE_ENV
         value: production
+      - key: DISPLAY
+        value: :99
       - key: PLAYWRIGHT_BROWSERS_PATH
         value: /opt/render/project/.cache/ms-playwright
+      - key: RUNNING_IN_RENDER
+        value: true
+      - key: ENABLE_VNC
+        value: false
+      - key: HEADLESS_MODE
+        value: true
     autoDeploy: true
