@@ -482,73 +482,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Demo Credentials */
-        .demo-credentials {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 12px;
-            padding: 20px;
-            margin-top: 32px;
-            text-align: center;
-            animation: fadeIn 0.8s ease-out 0.6s both;
-        }
-
-        .demo-credentials h4 {
-            margin: 0 0 12px 0;
-            font-size: 13px;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.7);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .demo-creds-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 12px;
-        }
-
-        .demo-cred-item {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 8px 12px;
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(5px);
-        }
-
-        .demo-cred-label {
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.6);
-            text-transform: uppercase;
-            margin-bottom: 4px;
-        }
-
-        .demo-cred-value {
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.9);
-            font-family: 'Courier New', monospace;
-            font-weight: 600;
-        }
-
-        /* Divider */
-        .divider {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            margin: 24px 0;
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 14px;
-        }
-
-        .divider::before,
-        .divider::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: rgba(255, 255, 255, 0.2);
-        }
 
         /* Responsive */
         @media (max-width: 540px) {
@@ -563,10 +496,6 @@
 
             .login-title {
                 font-size: 24px;
-            }
-
-            .demo-creds-grid {
-                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -667,21 +596,6 @@
                 </button>
             </form>
 
-            <div class="divider">or</div>
-
-            <div class="demo-credentials">
-                <h4>Demo Account</h4>
-                <div class="demo-creds-grid">
-                    <div class="demo-cred-item">
-                        <div class="demo-cred-label">Username</div>
-                        <div class="demo-cred-value">admin</div>
-                    </div>
-                    <div class="demo-cred-item">
-                        <div class="demo-cred-label">Password</div>
-                        <div class="demo-cred-value">admin123</div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 
