@@ -68,7 +68,7 @@ const Config = {
         }
         // If live, use Cloudflare tunnel URL (this is your tunnel for port 6086)
         // The tunnel is exposing the noVNC web interface
-        return 'https://considerations-curtis-operational-johnston.trycloudflare.com';
+        return 'https://luggage-detected-remarks-warriors.trycloudflare.com';
     },
     
     // Check if should open VNC in browser
