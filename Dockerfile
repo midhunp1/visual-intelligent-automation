@@ -69,7 +69,7 @@ echo "🚀 Visual Test Automation Platform Starting..."\n\
 echo "📍 Access at: http://localhost:8284"\n\
 \n\
 # Start the application\n\
-node server.js\n\
+node server-working.js\n\
 ' > /app/start.sh && chmod +x /app/start.sh
 
 # Expose port
