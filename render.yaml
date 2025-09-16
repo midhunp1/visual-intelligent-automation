@@ -1,23 +1,15 @@
 services:
   - type: web
-    name: via-platform
+    name: via-platform-api
     runtime: node
     repo: https://github.com/midhunp1/visual-intelligent-automation
-    buildCommand: npm install && npx playwright install-deps && npx playwright install chromium
-    startCommand: xvfb-run -a --server-args="-screen 0 1280x720x24" node server-working.js
+    buildCommand: npm install
+    startCommand: node server-working.js
     envVars:
       - key: PORT
         value: 10000
       - key: NODE_ENV
         value: production
-      - key: DISPLAY
-        value: :99
-      - key: PLAYWRIGHT_BROWSERS_PATH
-        value: /opt/render/project/.cache/ms-playwright
-      - key: RUNNING_IN_RENDER
-        value: true
-      - key: ENABLE_VNC
-        value: false
-      - key: HEADLESS_MODE
+      - key: API_ONLY_MODE
         value: true
     autoDeploy: true
